@@ -8,13 +8,13 @@ interface CardProps {
 
 export default function Card({ children, className = '', variant = 'default' }: CardProps) {
   const variantClasses = {
-    default: 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700',
-    highlighted: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',
-    warning: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',
+    default: '',
+    highlighted: 'bg-blue-500/5',
+    warning: 'bg-amber-500/5',
   };
 
   return (
-    <div className={`rounded-xl border shadow-sm p-6 ${variantClasses[variant]} ${className}`}>
+    <div className={`${variantClasses[variant]} ${className}`}>
       {children}
     </div>
   );
