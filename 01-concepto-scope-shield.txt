@@ -1,0 +1,64 @@
+ScopeShield
+============
+
+Concepto central
+----------------
+ScopeShield convierte mensajes ambiguos de cliente, jefe o stakeholder en un alcance tecnico claro usando el repositorio real del proyecto.
+
+Ejemplo de input:
+"Solo agrega login con Google, cambia el dashboard y que se vea mas moderno."
+
+ScopeShield responde:
+- Que esta pidiendo realmente.
+- Que partes del codigo se verian afectadas.
+- Que riesgos tecnicos existen.
+- Que preguntas faltan antes de aceptar el trabajo.
+- Que es alcance base vs alcance extra.
+- Estimacion aproximada por complejidad.
+- Plan tecnico inicial.
+- Respuesta profesional lista para enviar.
+
+Pitch corto
+-----------
+ScopeShield evita que un "cambio rapido" se convierta en tres dias de trabajo invisible. Usa IBM Bob para analizar el codigo y transformar solicitudes ambiguas en alcance tecnico, riesgos y acuerdos claros.
+
+MVP recomendado
+---------------
+1. Pegar solicitud del cliente o stakeholder.
+2. Cargar o seleccionar un repositorio.
+3. IBM Bob analiza la estructura del proyecto.
+4. Generar un Scope Contract con:
+   - Resumen del pedido.
+   - Archivos o componentes impactados.
+   - Riesgos tecnicos.
+   - Preguntas necesarias.
+   - Estimacion por complejidad.
+   - Respuesta lista para cliente.
+   - Checklist de implementacion.
+
+Diferencial
+-----------
+No es otro generador de docs, tests o PRs. Ataca un problema diario muy real: la mala definicion de alcance.
+
+Esto le pasa a freelancers, agencias, startups y equipos internos cuando reciben solicitudes vagas como "es solo un cambio rapido" o "solo haz que se vea moderno".
+
+Demo ideal
+----------
+1. Mostrar un mensaje ambiguo tipo WhatsApp o Slack.
+2. Ejecutar ScopeShield sobre un repo.
+3. Mostrar que detecta que "login con Google" puede tocar auth, variables de entorno, base de datos, UI y rutas protegidas.
+4. Mostrar el Scope Contract generado.
+5. Usar IBM Bob para implementar una parte pequena del plan.
+6. Cerrar con el contraste: antes habia caos, despues hay alcance claro.
+
+Elementos de producto
+---------------------
+- App: ScopeShield
+- Reporte generado: Scope Contract
+- Score: Scope Risk Score
+- Accion principal: Clarify Scope
+
+Top mensaje para jueces
+-----------------------
+ScopeShield no reemplaza al desarrollador. Lo protege de aceptar trabajo mal definido y ayuda a convertir conversaciones vagas en decisiones tecnicas claras.
+
