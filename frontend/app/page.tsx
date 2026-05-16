@@ -12,6 +12,7 @@ export default function Home() {
   const [error, setError] = useState('');
 
   const handleAnalyze = async () => {
+    // Validate that user entered a client request
     if (!clientRequest.trim()) {
       setError('Please enter a client request');
       return;
@@ -32,8 +33,9 @@ export default function Home() {
       // Navigate to dashboard
       router.push('/dashboard');
     } catch (err) {
-      setError('Failed to analyze scope. Please try again.');
-      console.error(err);
+      // Show useful error message if the request fails
+      setError('Unable to analyze scope. The backend may be unavailable. Please check that the backend is running or try again later.');
+      console.error('Error analyzing scope:', err);
     } finally {
       setIsAnalyzing(false);
     }

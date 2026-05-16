@@ -1,10 +1,13 @@
 # Backend Integration Guide
 
-This guide explains how to connect the ScopeShield frontend to the backend API.
+This guide explains how the ScopeShield frontend connects to the backend API.
 
-## Current State: Mock Data
+## Current State: Smart Fallback
 
-The frontend is currently using mock data from `lib/mockData.ts`. This allows independent development and testing.
+The frontend **automatically tries to call the backend API first**, and falls back to mock data if the backend is unavailable. This allows:
+- Seamless development when backend is not running
+- Automatic integration when backend becomes available
+- No code changes needed to switch between modes
 
 ## Backend API Endpoint
 
@@ -74,37 +77,7 @@ Create `frontend/.env.local`:
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-### 2. Update API Service
-
-In `frontend/lib/api.ts`, uncomment the real API code and comment out the mock:
-
-```typescript
-export async function analyzeScopeRequest(
-  request: AnalyzeRequest
-): Promise<ScopeContract> {
-  // Comment out mock data
-  // await new Promise(resolve => setTimeout(resolve, 2000));
-  // return mockScopeContract;
-
-  // Uncomment real API call
-  const response = await fetch(`${API_BASE_URL}/api/scope/analyze`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(request),
-  });
-  
-  if (!response.ok) {
-    throw new Error('Failed to analyze scope');
-  }
-  
-  const data = await response.json();
-  return data.data;
-}
-```
-
-### 3. Test Integration
+### 2. Test Integration
 
 1. Start backend: `cd backend && uvicorn main:app --reload`
 2. Start frontend: `cd frontend && npm run dev`

@@ -73,26 +73,21 @@ frontend/
 
 ## 🔧 Current Implementation
 
-### Mock Data Mode
-The frontend currently uses mock data from `lib/mockData.ts` based on the backend's example JSON. This allows frontend development to proceed independently.
+### Smart Backend Integration with Fallback
+The frontend **automatically tries to call the backend API** at `http://localhost:8000/api/scope/analyze`. If the backend is unavailable, it gracefully falls back to mock data.
 
-### API Integration (Ready for Backend)
-The `lib/api.ts` file is structured to easily switch from mock data to real API calls:
+**How it works:**
+1. User submits a request
+2. Frontend calls `POST /api/scope/analyze`
+3. If successful → Uses real backend data
+4. If fails → Falls back to mock data (with console warning)
+5. User sees results either way
 
-```typescript
-// Current: Mock data with simulated delay
-export async function analyzeScopeRequest(request: AnalyzeRequest) {
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  return mockScopeContract;
-}
-
-// Future: Uncomment when backend is ready
-// const response = await fetch(`${API_BASE_URL}/api/scope/analyze`, {
-//   method: 'POST',
-//   headers: { 'Content-Type': 'application/json' },
-//   body: JSON.stringify(request),
-// });
-```
+**Benefits:**
+- No code changes needed to switch between modes
+- Works immediately when backend starts
+- Continues working if backend stops
+- Perfect for development and demos
 
 ## 🎨 Design Principles
 
