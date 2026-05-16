@@ -1,7 +1,7 @@
 import { AnalyzeRequest, ScopeContract } from '@/types/scopeContract';
 import { mockScopeContract } from './mockData';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 /**
  * Analyze a client request and generate a Scope Contract

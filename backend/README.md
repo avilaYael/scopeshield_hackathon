@@ -42,14 +42,14 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edita `.env` si necesitas cambiar el puerto (por defecto: 8000).
+Edita `.env` si necesitas cambiar el puerto (por defecto: 8001).
 
 ## 🏃 Ejecutar el servidor
 
 ### Modo desarrollo (con auto-reload)
 
 ```bash
-uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8001
 ```
 
 O simplemente:
@@ -58,14 +58,14 @@ O simplemente:
 python main.py
 ```
 
-El servidor estará disponible en: `http://localhost:8000`
+El servidor estará disponible en: `http://localhost:8001`
 
 ## 📚 Documentación Interactiva
 
 FastAPI genera documentación automática:
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+- **Swagger UI**: http://localhost:8001/docs
+- **ReDoc**: http://localhost:8001/redoc
 
 ## 🔌 Endpoints
 
@@ -158,7 +158,7 @@ Health check del servicio.
 ### Con curl
 
 ```bash
-curl -X POST http://localhost:8000/api/scope/analyze \
+curl -X POST http://localhost:8001/api/scope/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "clientRequest": "Solo agrega login con Google, cambia el dashboard y que se vea más moderno.",
@@ -172,7 +172,7 @@ curl -X POST http://localhost:8000/api/scope/analyze \
 import requests
 
 response = requests.post(
-    "http://localhost:8000/api/scope/analyze",
+    "http://localhost:8001/api/scope/analyze",
     json={
         "clientRequest": "Solo agrega login con Google, cambia el dashboard y que se vea más moderno.",
         "repoContext": "React + Node.js app"
@@ -185,7 +185,7 @@ print(response.json())
 ### Con JavaScript (fetch)
 
 ```javascript
-fetch('http://localhost:8000/api/scope/analyze', {
+fetch('http://localhost:8001/api/scope/analyze', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

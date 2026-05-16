@@ -74,12 +74,12 @@ The backend should provide:
 Create `frontend/.env.local`:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8001
 ```
 
 ### 2. Test Integration
 
-1. Start backend: `cd backend && uvicorn main:app --reload`
+1. Start backend: `cd backend && python main.py`
 2. Start frontend: `cd frontend && npm run dev`
 3. Open http://localhost:3000
 4. Submit a request and verify it calls the backend
