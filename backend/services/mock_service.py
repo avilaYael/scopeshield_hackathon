@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Dict, Set
 from models.schemas import (
     ScopeContract,
     ImpactedArea,
@@ -8,203 +8,617 @@ from models.schemas import (
 )
 
 
-def generate_mock_scope_contract(client_request: str, repo_context: Optional[str] = None) -> ScopeContract:
+# Definición de palabras clave por categoría
+KEYWORDS = {
+    "auth": ["login", "auth", "google", "oauth", "usuario", "user", "sesion", "session", "password", "contraseña", "registro", "signup", "signin"],
+    "frontend": ["dashboard", "ui", "modern", "moderno", "design", "diseño", "responsive", "interfaz", "interface", "frontend", "react", "vue", "angular"],
+    "payment": ["payment", "pago", "subscription", "suscripcion", "stripe", "billing", "facturacion", "checkout", "tarjeta", "card"],
+    "database": ["database", "base de datos", "data", "datos", "records", "registros", "migration", "migracion", "sql", "mongodb", "postgres"]
+}
+
+# Patrones de archivos/carpetas por tipo
+REPO_PATTERNS = {
+    "auth": ["auth", "login", "session", "passport", "jwt", "oauth"],
+    "frontend": ["components", "views", "pages", "dashboard", "ui", "styles", "css"],
+    "payment": ["payment", "checkout", "stripe", "billing", "subscription"],
+    "database": ["models", "migrations", "seeds", "schema", "database", "db"],
+    "api": ["routes", "routers", "controllers", "api", "endpoints"],
+    "config": ["config", "env", "settings", "constants"]
+}
+
+
+def detect_categories(client_request: str) -> Set[str]:
     """
-    Genera un Scope Contract mock realista basado en el request del cliente.
-    
-    Para el MVP del hackathon, retorna datos hardcodeados pero coherentes.
-    En producción, esto sería reemplazado por análisis real con IBM Bob.
+    Detecta qué categorías están presentes en el request del cliente.
     """
+    request_lower = client_request.lower()
+    detected = set()
     
-    # Mock data realista para el ejemplo:
-    # "Solo agrega login con Google, cambia el dashboard y que se vea más moderno."
+    for category, keywords in KEYWORDS.items():
+        if any(keyword in request_lower for keyword in keywords):
+            detected.add(category)
     
-    return ScopeContract(
-        requestSummary=(
-            "El cliente solicita: 1) Implementar autenticación con Google OAuth, "
-            "2) Rediseñar el dashboard con un look moderno"
-        ),
-        hiddenScope=[
+    return detected
+
+
+def analyze_repo_context(repo_context: Optional[str]) -> Dict[str, List[str]]:
+    """
+    Analiza el repoContext para detectar archivos y carpetas mencionados.
+    Retorna un diccionario con categorías y archivos detectados.
+    """
+    if not repo_context:
+        return {}
+    
+    context_lower = repo_context.lower()
+    detected_files = {}
+    
+    for category, patterns in REPO_PATTERNS.items():
+        files = []
+        for pattern in patterns:
+            if pattern in context_lower:
+                # Buscar menciones de archivos que contengan el patrón
+                lines = repo_context.split('\n')
+                for line in lines:
+                    line_lower = line.lower()
+                    if pattern in line_lower:
+                        # Extraer posibles nombres de archivo
+                        words = line.split()
+                        for word in words:
+                            # Detectar archivos con extensiones comunes
+                            if any(ext in word.lower() for ext in ['.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.go', '.rb', '.php', '.css', '.html', '.json', '.yml', '.yaml']):
+                                files.append(word.strip(',:;()[]{}'))
+                            # Detectar carpetas (sin extensión pero con patrón)
+                            elif pattern in word.lower() and '.' not in word:
+                                files.append(word.strip(',:;()[]{}') + '/')
+        
+        if files:
+            detected_files[category] = list(set(files))[:5]  # Limitar a 5 archivos por categoría
+    
+    return detected_files
+
+
+def generate_hidden_scope(categories: Set[str]) -> List[str]:
+    """
+    Genera alcance oculto basado en las categorías detectadas.
+    """
+    hidden_scope = []
+    
+    if "auth" in categories:
+        hidden_scope.extend([
             "Manejo de sesiones y tokens de autenticación",
             "Migración de usuarios existentes al nuevo sistema",
             "Actualización de rutas protegidas y middleware",
             "Testing completo del flujo de autenticación",
-            "Configuración de credenciales en Google Cloud Console",
-            "Manejo de errores y casos edge en OAuth",
-            "Actualización de documentación técnica"
-        ],
-        impactedAreas=[
-            ImpactedArea(
-                area="Autenticación",
-                files=["auth.js", "login.component.jsx", "middleware/auth.js", "config/passport.js"],
-                complexity="Alta"
-            ),
-            ImpactedArea(
-                area="Dashboard UI",
-                files=["Dashboard.jsx", "dashboard.css", "components/DashboardCard.jsx", "components/Sidebar.jsx"],
-                complexity="Media"
-            ),
-            ImpactedArea(
-                area="Base de datos",
-                files=["models/User.js", "migrations/add_google_auth.js", "seeds/users.js"],
-                complexity="Media"
-            ),
-            ImpactedArea(
-                area="Configuración",
-                files=[".env", "config/oauth.js", "config/database.js"],
-                complexity="Baja"
-            )
-        ],
-        riskScore=7.5,
-        risks=[
-            Risk(
-                type="Técnico",
-                description="Integración OAuth puede requerir cambios significativos en la arquitectura de sesiones actual",
-                severity="Alta"
-            ),
+            "Configuración de credenciales en servicios externos",
+            "Manejo de errores y casos edge en autenticación"
+        ])
+    
+    if "frontend" in categories:
+        hidden_scope.extend([
+            "Diseño responsive para múltiples dispositivos",
+            "Testing de compatibilidad cross-browser",
+            "Optimización de rendimiento y carga",
+            "Actualización de componentes y estilos globales",
+            "Implementación de animaciones y transiciones"
+        ])
+    
+    if "payment" in categories:
+        hidden_scope.extend([
+            "Integración con gateway de pagos",
+            "Manejo de webhooks y eventos de pago",
+            "Implementación de lógica de reembolsos",
+            "Cumplimiento de normativas PCI DSS",
+            "Testing de flujos de pago en sandbox",
+            "Manejo de errores de transacciones"
+        ])
+    
+    if "database" in categories:
+        hidden_scope.extend([
+            "Diseño de esquema y relaciones",
+            "Creación de migraciones y rollbacks",
+            "Optimización de queries y índices",
+            "Backup y estrategia de recuperación",
+            "Testing de integridad de datos"
+        ])
+    
+    # Siempre agregar alcance general
+    hidden_scope.append("Actualización de documentación técnica")
+    
+    return hidden_scope
+
+
+def generate_impacted_areas(categories: Set[str], repo_files: Optional[Dict[str, List[str]]] = None) -> List[ImpactedArea]:
+    """
+    Genera áreas impactadas basadas en las categorías detectadas y archivos del repo.
+    """
+    areas = []
+    repo_files = repo_files or {}
+    
+    if "auth" in categories:
+        # Usar archivos del repo si están disponibles, sino usar defaults
+        auth_files = repo_files.get("auth", ["auth.js", "login.component.jsx", "middleware/auth.js", "config/passport.js"])
+        areas.append(ImpactedArea(
+            area="Autenticación",
+            files=auth_files[:4],  # Limitar a 4 archivos
+            complexity="Alta"
+        ))
+    
+    if "frontend" in categories:
+        frontend_files = repo_files.get("frontend", ["Dashboard.jsx", "styles.css", "components/Layout.jsx", "components/Sidebar.jsx"])
+        areas.append(ImpactedArea(
+            area="Frontend UI",
+            files=frontend_files[:4],
+            complexity="Media"
+        ))
+    
+    if "payment" in categories:
+        payment_files = repo_files.get("payment", ["payment.service.js", "checkout.component.jsx", "webhooks/stripe.js", "models/Transaction.js"])
+        areas.append(ImpactedArea(
+            area="Pagos",
+            files=payment_files[:4],
+            complexity="Alta"
+        ))
+    
+    if "database" in categories:
+        db_files = repo_files.get("database", ["models/User.js", "migrations/", "seeds/", "config/database.js"])
+        areas.append(ImpactedArea(
+            area="Base de datos",
+            files=db_files[:4],
+            complexity="Media"
+        ))
+    
+    # Agregar áreas adicionales detectadas en el repo
+    if "api" in repo_files and "api" not in [a.area for a in areas]:
+        areas.append(ImpactedArea(
+            area="API/Rutas",
+            files=repo_files["api"][:4],
+            complexity="Media"
+        ))
+    
+    # Siempre agregar configuración
+    config_files = repo_files.get("config", [".env", "config/app.js"])
+    areas.append(ImpactedArea(
+        area="Configuración",
+        files=config_files[:4],
+        complexity="Baja"
+    ))
+    
+    return areas
+
+
+def generate_risks(categories: Set[str]) -> List[Risk]:
+    """
+    Genera riesgos basados en las categorías detectadas.
+    """
+    risks = []
+    
+    if "auth" in categories:
+        risks.extend([
             Risk(
                 type="Seguridad",
-                description="Manejo correcto de tokens, refresh tokens y datos sensibles del usuario",
+                description="Manejo correcto de tokens, sesiones y datos sensibles del usuario",
                 severity="Alta"
-            ),
-            Risk(
-                type="UX",
-                description="Rediseño del dashboard puede afectar flujos de trabajo existentes de los usuarios",
-                severity="Media"
             ),
             Risk(
                 type="Compatibilidad",
                 description="Usuarios existentes necesitan migración o vinculación de cuentas",
                 severity="Media"
+            )
+        ])
+    
+    if "frontend" in categories:
+        risks.extend([
+            Risk(
+                type="UX",
+                description="Cambios en la interfaz pueden afectar flujos de trabajo existentes",
+                severity="Media"
             ),
             Risk(
-                type="Dependencias",
-                description="Nuevas librerías OAuth pueden tener conflictos con versiones actuales",
+                type="Compatibilidad",
+                description="Asegurar funcionamiento en diferentes navegadores y dispositivos",
                 severity="Baja"
             )
-        ],
-        clarifyingQuestions=[
-            "¿Qué información del perfil de Google necesitas almacenar (email, foto, nombre completo)?",
-            "¿Los usuarios actuales deben poder vincular sus cuentas existentes con Google?",
-            "¿Mantendremos el login tradicional o será solo Google?",
-            "¿Tienes un diseño específico o mockups para el nuevo dashboard?",
-            "¿El dashboard debe ser responsive para tablets y móviles?",
-            "¿Hay métricas o widgets específicos que deben mostrarse en el dashboard?",
-            "¿Cuál es la prioridad: primero auth o primero dashboard?",
-            "¿Necesitas analytics o tracking de eventos en el nuevo dashboard?"
-        ],
-        estimate=Estimate(
-            complexity="Media-Alta",
-            timeRange="3-5 días",
-            breakdown={
-                "googleAuth": "1-2 días",
-                "dashboardRedesign": "1.5-2 días",
-                "testing": "0.5-1 día"
-            }
-        ),
-        implementationPlan=[
-            ImplementationStep(
-                step=1,
-                task="Configurar proyecto en Google Cloud Console y obtener credenciales OAuth",
-                duration="1-2 horas",
-                dependencies=[]
+        ])
+    
+    if "payment" in categories:
+        risks.extend([
+            Risk(
+                type="Seguridad",
+                description="Cumplimiento de normativas PCI DSS y manejo seguro de datos de pago",
+                severity="Alta"
             ),
-            ImplementationStep(
-                step=2,
-                task="Implementar backend OAuth flow con Passport.js o similar",
-                duration="4-6 horas",
-                dependencies=["step 1"]
+            Risk(
+                type="Financiero",
+                description="Errores en procesamiento de pagos pueden causar pérdidas económicas",
+                severity="Alta"
             ),
-            ImplementationStep(
-                step=3,
-                task="Crear componente de login con Google en frontend",
-                duration="3-4 horas",
-                dependencies=["step 2"]
-            ),
-            ImplementationStep(
-                step=4,
-                task="Actualizar modelo de usuario y crear migraciones de BD",
-                duration="2-3 horas",
-                dependencies=["step 2"]
-            ),
-            ImplementationStep(
-                step=5,
-                task="Diseñar wireframes y mockups del nuevo dashboard",
-                duration="2-3 horas",
-                dependencies=[]
-            ),
-            ImplementationStep(
-                step=6,
-                task="Implementar nuevo diseño del dashboard con componentes modernos",
-                duration="6-8 horas",
-                dependencies=["step 5"]
-            ),
-            ImplementationStep(
-                step=7,
-                task="Testing integral de autenticación y UI",
-                duration="4-6 horas",
-                dependencies=["step 3", "step 6"]
-            ),
-            ImplementationStep(
-                step=8,
-                task="Deployment a staging y pruebas finales",
-                duration="2-3 horas",
-                dependencies=["step 7"]
+            Risk(
+                type="Técnico",
+                description="Dependencia de servicios externos (downtime del gateway de pagos)",
+                severity="Media"
             )
-        ],
-        clientReply=(
-            "Hola,\n\n"
-            "Gracias por tu solicitud. He analizado los cambios que mencionas y quiero asegurarme "
-            "de que estemos alineados antes de comenzar:\n\n"
-            "**Lo que entiendo:**\n"
-            "- Implementar login con Google OAuth\n"
-            "- Rediseñar el dashboard con un look más moderno\n\n"
-            "**Alcance técnico identificado:**\n"
-            "- Configuración completa de Google Cloud Console\n"
-            "- Integración OAuth en backend y frontend\n"
-            "- Actualización del modelo de usuarios en base de datos\n"
-            "- Rediseño completo de componentes del dashboard\n"
-            "- Testing de seguridad y flujos de usuario\n"
-            "- Manejo de migración de usuarios existentes\n\n"
-            "**Preguntas importantes antes de comenzar:**\n"
-            "1. ¿Qué datos del perfil de Google necesitas almacenar?\n"
-            "2. ¿Los usuarios actuales deben poder vincular sus cuentas?\n"
-            "3. ¿Tienes un diseño de referencia para el dashboard o trabajamos con mejores prácticas?\n"
-            "4. ¿Mantenemos el login tradicional como opción alternativa?\n\n"
-            "**Estimación:** 3-5 días de desarrollo\n\n"
-            "**Riesgos a considerar:**\n"
-            "Los cambios en autenticación pueden afectar sesiones actuales de usuarios. "
-            "Recomiendo hacer deploy primero en ambiente de staging para validar antes de producción.\n\n"
-            "¿Te parece bien que agendemos una llamada rápida de 15 minutos para aclarar estos puntos "
-            "antes de comenzar el desarrollo?\n\n"
-            "Saludos"
-        ),
-        checklist=[
-            "✓ Crear proyecto en Google Cloud Console",
-            "✓ Obtener Client ID y Client Secret",
-            "✓ Configurar URLs de redirección autorizadas",
-            "✓ Instalar dependencias OAuth (passport, passport-google-oauth20)",
-            "✓ Implementar estrategia de autenticación en backend",
-            "✓ Crear endpoints /auth/google y /auth/google/callback",
-            "✓ Actualizar modelo User con campos googleId y googleProfile",
-            "✓ Crear migración de base de datos",
-            "✓ Implementar botón 'Continuar con Google' en frontend",
-            "✓ Manejar respuesta OAuth y crear/actualizar sesión",
-            "✓ Actualizar middleware de rutas protegidas",
-            "✓ Diseñar wireframes del nuevo dashboard",
-            "✓ Definir paleta de colores y tipografía moderna",
-            "✓ Actualizar componentes de UI (cards, sidebar, header)",
-            "✓ Implementar diseño responsive",
-            "✓ Agregar animaciones y transiciones suaves",
-            "✓ Testing de flujo OAuth completo",
-            "✓ Testing de UI en Chrome, Firefox, Safari",
-            "✓ Testing en dispositivos móviles",
-            "✓ Validar accesibilidad (WCAG)",
-            "✓ Documentar cambios para el equipo",
-            "✓ Actualizar README con nuevas instrucciones de setup",
-            "✓ Deploy a staging",
-            "✓ QA final antes de producción"
-        ]
+        ])
+    
+    if "database" in categories:
+        risks.extend([
+            Risk(
+                type="Datos",
+                description="Riesgo de pérdida o corrupción de datos durante migraciones",
+                severity="Alta"
+            ),
+            Risk(
+                type="Rendimiento",
+                description="Queries mal optimizados pueden afectar el performance de la aplicación",
+                severity="Media"
+            )
+        ])
+    
+    # Siempre agregar riesgo de dependencias
+    risks.append(Risk(
+        type="Dependencias",
+        description="Nuevas librerías pueden tener conflictos con versiones actuales",
+        severity="Baja"
+    ))
+    
+    return risks
+
+
+def generate_clarifying_questions(categories: Set[str]) -> List[str]:
+    """
+    Genera preguntas de aclaración basadas en las categorías detectadas.
+    """
+    questions = []
+    
+    if "auth" in categories:
+        questions.extend([
+            "¿Qué información del usuario necesitas almacenar?",
+            "¿Los usuarios actuales deben poder vincular sus cuentas existentes?",
+            "¿Mantendremos métodos de autenticación alternativos?",
+            "¿Necesitas autenticación de dos factores (2FA)?"
+        ])
+    
+    if "frontend" in categories:
+        questions.extend([
+            "¿Tienes un diseño específico o mockups de referencia?",
+            "¿La interfaz debe ser responsive para tablets y móviles?",
+            "¿Hay componentes o widgets específicos que deben incluirse?",
+            "¿Necesitas soporte para modo oscuro/claro?"
+        ])
+    
+    if "payment" in categories:
+        questions.extend([
+            "¿Qué métodos de pago necesitas soportar (tarjeta, PayPal, etc.)?",
+            "¿Necesitas manejar suscripciones recurrentes o pagos únicos?",
+            "¿En qué monedas deben procesarse los pagos?",
+            "¿Necesitas generar facturas automáticas?",
+            "¿Qué información debe incluirse en los recibos de pago?"
+        ])
+    
+    if "database" in categories:
+        questions.extend([
+            "¿Qué volumen de datos esperas manejar?",
+            "¿Necesitas mantener datos históricos o se pueden archivar?",
+            "¿Hay requisitos específicos de backup y recuperación?",
+            "¿Los cambios deben ser retrocompatibles con datos existentes?"
+        ])
+    
+    # Preguntas generales
+    questions.extend([
+        "¿Cuál es la prioridad de implementación entre las diferentes funcionalidades?",
+        "¿Hay alguna fecha límite o deadline específico?"
+    ])
+    
+    return questions
+
+
+def calculate_risk_score(categories: Set[str], risks: List[Risk]) -> float:
+    """
+    Calcula el score de riesgo basado en categorías y severidad de riesgos.
+    """
+    base_score = len(categories) * 1.5  # Más categorías = más complejidad
+    
+    severity_weights = {
+        "Alta": 2.0,
+        "Media": 1.0,
+        "Baja": 0.3
+    }
+    
+    risk_score = base_score
+    for risk in risks:
+        risk_score += severity_weights.get(risk.severity, 0.5)
+    
+    # Normalizar entre 0 y 10
+    return min(10.0, round(risk_score, 1))
+
+
+def generate_estimate(categories: Set[str]) -> Estimate:
+    """
+    Genera estimación de tiempo basada en las categorías detectadas.
+    """
+    complexity_map = {
+        0: ("Baja", "1-2 días"),
+        1: ("Baja-Media", "2-3 días"),
+        2: ("Media", "3-5 días"),
+        3: ("Media-Alta", "5-7 días"),
+        4: ("Alta", "1-2 semanas")
+    }
+    
+    num_categories = len(categories)
+    complexity, time_range = complexity_map.get(
+        min(num_categories, 4),
+        ("Alta", "1-2 semanas")
     )
+    
+    breakdown = {}
+    if "auth" in categories:
+        breakdown["autenticacion"] = "1-2 días"
+    if "frontend" in categories:
+        breakdown["frontend"] = "1.5-2 días"
+    if "payment" in categories:
+        breakdown["pagos"] = "2-3 días"
+    if "database" in categories:
+        breakdown["database"] = "1-2 días"
+    breakdown["testing"] = "0.5-1 día"
+    
+    return Estimate(
+        complexity=complexity,
+        timeRange=time_range,
+        breakdown=breakdown
+    )
+
+
+def generate_implementation_plan(categories: Set[str]) -> List[ImplementationStep]:
+    """
+    Genera plan de implementación basado en las categorías detectadas.
+    """
+    steps = []
+    step_num = 1
+    
+    if "database" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Diseñar esquema de base de datos y crear migraciones",
+            duration="2-3 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+    
+    if "auth" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Configurar servicio de autenticación y obtener credenciales",
+            duration="1-2 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+        
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Implementar flujo de autenticación en backend",
+            duration="4-6 horas",
+            dependencies=[f"step {step_num-1}"]
+        ))
+        step_num += 1
+    
+    if "payment" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Configurar cuenta en gateway de pagos y obtener API keys",
+            duration="1-2 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+        
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Implementar integración de pagos y webhooks",
+            duration="6-8 horas",
+            dependencies=[f"step {step_num-1}"]
+        ))
+        step_num += 1
+    
+    if "frontend" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Diseñar wireframes y mockups de la interfaz",
+            duration="2-3 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+        
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Implementar componentes de UI y estilos",
+            duration="6-8 horas",
+            dependencies=[f"step {step_num-1}"]
+        ))
+        step_num += 1
+    
+    # Pasos finales siempre presentes
+    steps.append(ImplementationStep(
+        step=step_num,
+        task="Testing integral de todas las funcionalidades",
+        duration="4-6 horas",
+        dependencies=[f"step {i}" for i in range(1, step_num)]
+    ))
+    step_num += 1
+    
+    steps.append(ImplementationStep(
+        step=step_num,
+        task="Deployment a staging y pruebas finales",
+        duration="2-3 horas",
+        dependencies=[f"step {step_num-1}"]
+    ))
+    
+    return steps
+
+
+def generate_client_reply(
+    client_request: str,
+    categories: Set[str],
+    hidden_scope: List[str],
+    questions: List[str],
+    estimate: Estimate,
+    risks: List[Risk]
+) -> str:
+    """
+    Genera respuesta profesional para el cliente.
+    """
+    # Identificar temas principales
+    topics = []
+    if "auth" in categories:
+        topics.append("autenticación")
+    if "frontend" in categories:
+        topics.append("interfaz de usuario")
+    if "payment" in categories:
+        topics.append("sistema de pagos")
+    if "database" in categories:
+        topics.append("base de datos")
+    
+    topics_str = ", ".join(topics) if topics else "las funcionalidades solicitadas"
+    
+    reply = f"""Hola,
+
+Gracias por tu solicitud. He analizado los cambios que mencionas y quiero asegurarme de que estemos alineados antes de comenzar:
+
+**Lo que entiendo:**
+{client_request}
+
+**Alcance técnico identificado:**
+"""
+    
+    for scope_item in hidden_scope[:5]:  # Mostrar los primeros 5
+        reply += f"- {scope_item}\n"
+    
+    reply += f"\n**Preguntas importantes antes de comenzar:**\n"
+    for i, question in enumerate(questions[:4], 1):  # Mostrar las primeras 4
+        reply += f"{i}. {question}\n"
+    
+    reply += f"\n**Estimación:** {estimate.timeRange} de desarrollo\n"
+    
+    high_risks = [r for r in risks if r.severity == "Alta"]
+    if high_risks:
+        reply += f"\n**Riesgos a considerar:**\n"
+        reply += f"{high_risks[0].description} "
+        reply += "Recomiendo hacer deploy primero en ambiente de staging para validar antes de producción.\n"
+    
+    reply += f"\n¿Te parece bien que agendemos una llamada rápida de 15 minutos para aclarar estos puntos antes de comenzar el desarrollo?\n\nSaludos"
+    
+    return reply
+
+
+def generate_checklist(categories: Set[str]) -> List[str]:
+    """
+    Genera checklist de tareas basado en las categorías detectadas.
+    """
+    checklist = []
+    
+    if "auth" in categories:
+        checklist.extend([
+            "✓ Configurar servicio de autenticación",
+            "✓ Obtener credenciales y API keys",
+            "✓ Implementar estrategia de autenticación en backend",
+            "✓ Crear endpoints de autenticación",
+            "✓ Actualizar modelo de usuario",
+            "✓ Implementar componente de login en frontend",
+            "✓ Manejar sesiones y tokens",
+            "✓ Actualizar middleware de rutas protegidas"
+        ])
+    
+    if "frontend" in categories:
+        checklist.extend([
+            "✓ Diseñar wireframes y mockups",
+            "✓ Definir paleta de colores y tipografía",
+            "✓ Actualizar componentes de UI",
+            "✓ Implementar diseño responsive",
+            "✓ Agregar animaciones y transiciones",
+            "✓ Testing en múltiples navegadores"
+        ])
+    
+    if "payment" in categories:
+        checklist.extend([
+            "✓ Configurar cuenta en gateway de pagos",
+            "✓ Obtener API keys de producción y sandbox",
+            "✓ Implementar integración de pagos",
+            "✓ Configurar webhooks",
+            "✓ Implementar manejo de errores de pago",
+            "✓ Testing de flujos de pago en sandbox",
+            "✓ Validar cumplimiento PCI DSS"
+        ])
+    
+    if "database" in categories:
+        checklist.extend([
+            "✓ Diseñar esquema de base de datos",
+            "✓ Crear migraciones",
+            "✓ Implementar modelos y relaciones",
+            "✓ Optimizar queries e índices",
+            "✓ Configurar backup automático",
+            "✓ Testing de integridad de datos"
+        ])
+    
+    # Tareas generales
+    checklist.extend([
+        "✓ Testing integral de funcionalidades",
+        "✓ Documentar cambios para el equipo",
+        "✓ Actualizar README con instrucciones",
+        "✓ Deploy a staging",
+        "✓ QA final antes de producción"
+    ])
+    
+    return checklist
+
+
+def generate_mock_scope_contract(client_request: str, repo_context: Optional[str] = None) -> ScopeContract:
+    """
+    Genera un Scope Contract dinámico basado en el análisis del request del cliente.
+    
+    Analiza el texto del request para detectar categorías (auth, frontend, payment, database)
+    y genera contenido relevante para cada una. Si se proporciona repoContext, lo usa para
+    identificar archivos y carpetas específicos del repositorio.
+    """
+    # Detectar categorías presentes en el request
+    categories = detect_categories(client_request)
+    
+    # Analizar repoContext si está disponible
+    repo_files = analyze_repo_context(repo_context) if repo_context else {}
+    
+    # Generar componentes basados en las categorías detectadas
+    hidden_scope = generate_hidden_scope(categories)
+    impacted_areas = generate_impacted_areas(categories, repo_files)
+    risks = generate_risks(categories)
+    clarifying_questions = generate_clarifying_questions(categories)
+    estimate = generate_estimate(categories)
+    implementation_plan = generate_implementation_plan(categories)
+    checklist = generate_checklist(categories)
+    
+    # Calcular risk score
+    risk_score = calculate_risk_score(categories, risks)
+    
+    # Generar respuesta para el cliente
+    client_reply = generate_client_reply(
+        client_request,
+        categories,
+        hidden_scope,
+        clarifying_questions,
+        estimate,
+        risks
+    )
+    
+    # Generar resumen del request
+    request_summary = f"El cliente solicita cambios relacionados con: {', '.join(categories) if categories else 'funcionalidades generales'}"
+    
+    return ScopeContract(
+        requestSummary=request_summary,
+        hiddenScope=hidden_scope,
+        impactedAreas=impacted_areas,
+        riskScore=risk_score,
+        risks=risks,
+        clarifyingQuestions=clarifying_questions,
+        estimate=estimate,
+        implementationPlan=implementation_plan,
+        clientReply=client_reply,
+        checklist=checklist
+    )
+
 
 # Made with Bob
