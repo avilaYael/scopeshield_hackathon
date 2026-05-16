@@ -1,3 +1,4 @@
+import re
 from typing import Optional, List, Dict, Set
 from models.schemas import (
     ScopeContract,
@@ -10,10 +11,18 @@ from models.schemas import (
 
 # Definición de palabras clave por categoría
 KEYWORDS = {
-    "auth": ["login", "auth", "google", "oauth", "usuario", "user", "sesion", "session", "password", "contraseña", "registro", "signup", "signin"],
+    "auth": ["login", "auth", "autenticacion", "autenticación", "google", "oauth", "jwt", "usuario", "usuarios", "user", "users", "sesion", "sesión", "session", "password", "contraseña", "registro", "signup", "signin"],
     "frontend": ["dashboard", "ui", "modern", "moderno", "design", "diseño", "responsive", "interfaz", "interface", "frontend", "react", "vue", "angular"],
-    "payment": ["payment", "pago", "subscription", "suscripcion", "stripe", "billing", "facturacion", "checkout", "tarjeta", "card"],
-    "database": ["database", "base de datos", "data", "datos", "records", "registros", "migration", "migracion", "sql", "mongodb", "postgres"]
+    "payment": ["payment", "payments", "pago", "pagos", "subscription", "subscriptions", "suscripcion", "suscripción", "suscripciones", "stripe", "paypal", "billing", "facturacion", "facturación", "checkout", "tarjeta", "tarjetas", "card", "cards"],
+    "database": ["database", "base de datos", "bases de datos", "data", "datos", "records", "registros", "migration", "migrations", "migracion", "migración", "migraciones", "sql", "mongodb", "postgres", "postgresql"],
+    "reports": ["reporte", "reportes", "report", "reports", "exportar", "export", "pdf", "excel", "csv", "descargar", "download"],
+    "files": ["archivo", "archivos", "file", "files", "upload", "subir", "cargar", "imagen", "image", "documento", "document"],
+    "notifications": ["notificacion", "notificaciones", "notification", "notifications", "push", "email", "correo", "sms", "alerta", "alertas"],
+    "realtime": ["chat", "tiempo real", "real time", "realtime", "socket", "websocket", "socket.io", "live"],
+    "ai": ["ia", "ai", "inteligencia artificial", "machine learning", "ml", "modelo", "model", "ocr", "facial", "reconocimiento", "vision"],
+    "audit": ["auditoria", "auditoría", "audit", "historial", "history", "log", "logs", "tracking", "trazabilidad"],
+    "performance": ["rapido", "rápido", "rapida", "rápida", "rapidez", "performance", "rendimiento", "optimizar", "optimizacion", "optimización", "optimization", "carga", "latencia", "slow", "lento", "lenta"],
+    "api": ["api", "endpoint", "endpoints", "integracion", "integración", "webhook", "servicio", "backend", "microservicio"]
 }
 
 # Patrones de archivos/carpetas por tipo
@@ -23,7 +32,29 @@ REPO_PATTERNS = {
     "payment": ["payment", "checkout", "stripe", "billing", "subscription"],
     "database": ["models", "migrations", "seeds", "schema", "database", "db"],
     "api": ["routes", "routers", "controllers", "api", "endpoints"],
+    "reports": ["reports", "exports", "pdf", "excel", "csv"],
+    "files": ["uploads", "storage", "files", "documents", "media"],
+    "notifications": ["notifications", "email", "push", "sms", "alerts"],
+    "realtime": ["socket", "websocket", "chat", "realtime"],
+    "ai": ["ai", "ml", "vision", "ocr", "model"],
+    "audit": ["audit", "logs", "history", "tracking"],
+    "performance": ["cache", "performance", "optimization", "metrics"],
     "config": ["config", "env", "settings", "constants"]
+}
+
+CATEGORY_LABELS = {
+    "auth": "Autenticación",
+    "frontend": "Frontend/UI",
+    "payment": "Pagos",
+    "database": "Base de datos",
+    "reports": "Reportes y exportación",
+    "files": "Archivos y almacenamiento",
+    "notifications": "Notificaciones",
+    "realtime": "Tiempo real",
+    "ai": "IA/automatización",
+    "audit": "Auditoría",
+    "performance": "Rendimiento",
+    "api": "API/backend"
 }
 
 
@@ -35,10 +66,15 @@ def detect_categories(client_request: str) -> Set[str]:
     detected = set()
     
     for category, keywords in KEYWORDS.items():
-        if any(keyword in request_lower for keyword in keywords):
+        if any(_matches_keyword(request_lower, keyword) for keyword in keywords):
             detected.add(category)
     
     return detected
+
+
+def _matches_keyword(text: str, keyword: str) -> bool:
+    escaped = re.escape(keyword.lower())
+    return re.search(rf"(?<!\w){escaped}(?!\w)", text) is not None
 
 
 def analyze_repo_context(repo_context: Optional[str]) -> Dict[str, List[str]]:
@@ -120,6 +156,70 @@ def generate_hidden_scope(categories: Set[str]) -> List[str]:
             "Backup y estrategia de recuperación",
             "Testing de integridad de datos"
         ])
+
+    if "reports" in categories:
+        hidden_scope.extend([
+            "Definición de campos, filtros y permisos para reportes",
+            "Generación y validación de formatos exportables",
+            "Manejo de archivos grandes y tiempos de descarga",
+            "Pruebas de consistencia entre datos mostrados y exportados"
+        ])
+
+    if "files" in categories:
+        hidden_scope.extend([
+            "Validación de tipos, tamaño y seguridad de archivos",
+            "Configuración de almacenamiento local o cloud",
+            "Escaneo básico de archivos y manejo de errores de carga",
+            "Políticas de acceso, descarga y eliminación de archivos"
+        ])
+
+    if "notifications" in categories:
+        hidden_scope.extend([
+            "Gestión de permisos de notificación del usuario",
+            "Configuración de proveedor de envío y plantillas",
+            "Manejo de reintentos, fallos y preferencias de usuario",
+            "Pruebas en distintos navegadores y dispositivos"
+        ])
+
+    if "realtime" in categories:
+        hidden_scope.extend([
+            "Diseño de canales, eventos y estados de conexión",
+            "Manejo de reconexión, presencia y mensajes duplicados",
+            "Escalabilidad de conexiones concurrentes",
+            "Pruebas de latencia y condiciones de red inestables"
+        ])
+
+    if "ai" in categories:
+        hidden_scope.extend([
+            "Selección o integración de modelo de IA",
+            "Manejo de precisión, falsos positivos y casos edge",
+            "Privacidad y consentimiento para datos procesados por IA",
+            "Monitoreo de costos, latencia y calidad de resultados"
+        ])
+
+    if "audit" in categories:
+        hidden_scope.extend([
+            "Definición de eventos auditables y retención de historial",
+            "Diseño de trazabilidad por usuario, fecha y acción",
+            "Protección contra modificación o eliminación de logs",
+            "Consultas y filtros para revisar actividad"
+        ])
+
+    if "performance" in categories:
+        hidden_scope.extend([
+            "Medición de tiempos actuales antes de optimizar",
+            "Identificación de cuellos de botella en frontend, backend y datos",
+            "Estrategia de caché e invalidación",
+            "Pruebas de regresión para evitar romper flujos existentes"
+        ])
+
+    if "api" in categories:
+        hidden_scope.extend([
+            "Definición de contratos de API y manejo de errores",
+            "Validación de payloads y documentación de endpoints",
+            "Manejo de autenticación, rate limits y observabilidad",
+            "Pruebas de integración entre frontend y backend"
+        ])
     
     # Siempre agregar alcance general
     hidden_scope.append("Actualización de documentación técnica")
@@ -166,12 +266,69 @@ def generate_impacted_areas(categories: Set[str], repo_files: Optional[Dict[str,
             files=db_files[:4],
             complexity="Media"
         ))
+
+    if "reports" in categories:
+        report_files = repo_files.get("reports", ["services/report.service.js", "components/ReportExport.jsx", "utils/pdf-export.js", "api/reports.js"])
+        areas.append(ImpactedArea(
+            area="Reportes y exportación",
+            files=report_files[:4],
+            complexity="Media"
+        ))
+
+    if "files" in categories:
+        file_files = repo_files.get("files", ["services/upload.service.js", "storage/", "components/FileUploader.jsx", "api/files.js"])
+        areas.append(ImpactedArea(
+            area="Archivos y almacenamiento",
+            files=file_files[:4],
+            complexity="Media"
+        ))
+
+    if "notifications" in categories:
+        notification_files = repo_files.get("notifications", ["services/notification.service.js", "workers/notifications.js", "components/NotificationSettings.jsx", "api/notifications.js"])
+        areas.append(ImpactedArea(
+            area="Notificaciones",
+            files=notification_files[:4],
+            complexity="Media"
+        ))
+
+    if "realtime" in categories:
+        realtime_files = repo_files.get("realtime", ["services/socket.service.js", "components/Chat.jsx", "api/realtime.js", "workers/events.js"])
+        areas.append(ImpactedArea(
+            area="Tiempo real",
+            files=realtime_files[:4],
+            complexity="Alta"
+        ))
+
+    if "ai" in categories:
+        ai_files = repo_files.get("ai", ["services/ai.service.js", "models/inference.js", "api/ai.js", "workers/ai-jobs.js"])
+        areas.append(ImpactedArea(
+            area="IA/automatización",
+            files=ai_files[:4],
+            complexity="Alta"
+        ))
+
+    if "audit" in categories:
+        audit_files = repo_files.get("audit", ["services/audit.service.js", "models/AuditLog.js", "api/audit.js", "middleware/audit.js"])
+        areas.append(ImpactedArea(
+            area="Auditoría",
+            files=audit_files[:4],
+            complexity="Media"
+        ))
+
+    if "performance" in categories:
+        performance_files = repo_files.get("performance", ["lib/cache.js", "services/performance.service.js", "database/indexes.sql", "monitoring/metrics.js"])
+        areas.append(ImpactedArea(
+            area="Rendimiento",
+            files=performance_files[:4],
+            complexity="Media"
+        ))
     
     # Agregar áreas adicionales detectadas en el repo
-    if "api" in repo_files and "api" not in [a.area for a in areas]:
+    if "api" in categories or ("api" in repo_files and "API/Rutas" not in [a.area for a in areas]):
+        api_files = repo_files.get("api", ["routes/api.js", "controllers/", "services/", "schemas/"])
         areas.append(ImpactedArea(
             area="API/Rutas",
-            files=repo_files["api"][:4],
+            files=api_files[:4],
             complexity="Media"
         ))
     
@@ -252,6 +409,111 @@ def generate_risks(categories: Set[str]) -> List[Risk]:
                 severity="Media"
             )
         ])
+
+    if "reports" in categories:
+        risks.extend([
+            Risk(
+                type="Datos",
+                description="Los reportes pueden exponer información sensible si no se filtran permisos correctamente",
+                severity="Alta"
+            ),
+            Risk(
+                type="Rendimiento",
+                description="Exportaciones grandes pueden saturar memoria, CPU o bloquear requests del servidor",
+                severity="Media"
+            )
+        ])
+
+    if "files" in categories:
+        risks.extend([
+            Risk(
+                type="Seguridad",
+                description="Archivos subidos por usuarios requieren validación estricta para evitar contenido malicioso",
+                severity="Alta"
+            ),
+            Risk(
+                type="Infraestructura",
+                description="El almacenamiento, límites de tamaño y limpieza de archivos pueden incrementar costos",
+                severity="Media"
+            )
+        ])
+
+    if "notifications" in categories:
+        risks.extend([
+            Risk(
+                type="Entregabilidad",
+                description="Notificaciones pueden fallar por permisos, tokens vencidos o restricciones del proveedor",
+                severity="Media"
+            ),
+            Risk(
+                type="UX",
+                description="Demasiadas notificaciones pueden afectar la experiencia y requerir preferencias granulares",
+                severity="Baja"
+            )
+        ])
+
+    if "realtime" in categories:
+        risks.extend([
+            Risk(
+                type="Escalabilidad",
+                description="Funcionalidades en tiempo real requieren manejo cuidadoso de conexiones concurrentes",
+                severity="Alta"
+            ),
+            Risk(
+                type="Consistencia",
+                description="Eventos duplicados o perdidos pueden dejar estados inconsistentes entre usuarios",
+                severity="Media"
+            )
+        ])
+
+    if "ai" in categories:
+        risks.extend([
+            Risk(
+                type="Precisión",
+                description="Modelos de IA pueden generar falsos positivos, falsos negativos o resultados no determinísticos",
+                severity="Alta"
+            ),
+            Risk(
+                type="Privacidad",
+                description="Datos procesados por IA pueden requerir consentimiento, anonimización y políticas de retención",
+                severity="Alta"
+            )
+        ])
+
+    if "audit" in categories:
+        risks.extend([
+            Risk(
+                type="Cumplimiento",
+                description="La auditoría debe registrar eventos suficientes sin exponer datos sensibles innecesarios",
+                severity="Media"
+            ),
+            Risk(
+                type="Integridad",
+                description="Los logs deben protegerse contra alteración o eliminación no autorizada",
+                severity="Media"
+            )
+        ])
+
+    if "performance" in categories:
+        risks.extend([
+            Risk(
+                type="Regresión",
+                description="Optimizar sin métricas base puede empeorar flujos existentes o romper cachés",
+                severity="Media"
+            ),
+            Risk(
+                type="Observabilidad",
+                description="Sin monitoreo será difícil validar si la mejora realmente reduce latencia",
+                severity="Baja"
+            )
+        ])
+
+    if "api" in categories:
+        risks.append(Risk(
+            type="Integración",
+            description="Cambios de API pueden romper consumidores existentes si no se versionan o documentan",
+            severity="Media"
+        ))
     
     # Siempre agregar riesgo de dependencias
     risks.append(Risk(
@@ -300,6 +562,70 @@ def generate_clarifying_questions(categories: Set[str]) -> List[str]:
             "¿Necesitas mantener datos históricos o se pueden archivar?",
             "¿Hay requisitos específicos de backup y recuperación?",
             "¿Los cambios deben ser retrocompatibles con datos existentes?"
+        ])
+
+    if "reports" in categories:
+        questions.extend([
+            "¿Qué campos y filtros debe incluir cada reporte?",
+            "¿Quién puede exportar datos y con qué permisos?",
+            "¿El reporte debe generarse en tiempo real o puede quedar en cola?",
+            "¿Qué formato exacto necesitas: PDF, Excel, CSV o varios?"
+        ])
+
+    if "files" in categories:
+        questions.extend([
+            "¿Qué tipos y tamaños máximos de archivo se permitirán?",
+            "¿Los archivos deben almacenarse localmente o en un proveedor cloud?",
+            "¿Quién podrá ver, descargar o eliminar cada archivo?",
+            "¿Necesitas antivirus, expiración o versionado de archivos?"
+        ])
+
+    if "notifications" in categories:
+        questions.extend([
+            "¿Qué eventos deben disparar notificaciones?",
+            "¿Qué canales necesitas: push, email, SMS o in-app?",
+            "¿El usuario podrá configurar sus preferencias?",
+            "¿Necesitas métricas de entrega, apertura o fallos?"
+        ])
+
+    if "realtime" in categories:
+        questions.extend([
+            "¿Cuántos usuarios concurrentes esperas soportar?",
+            "¿Qué eventos deben sincronizarse en tiempo real?",
+            "¿Necesitas historial persistente o solo mensajes/eventos en vivo?",
+            "¿Qué debe pasar cuando el usuario pierde conexión?"
+        ])
+
+    if "ai" in categories:
+        questions.extend([
+            "¿Qué nivel de precisión mínimo necesitas para aceptar el resultado?",
+            "¿Ya existe un proveedor/modelo definido o hay que evaluarlo?",
+            "¿Los datos procesados por IA contienen información sensible?",
+            "¿Necesitas revisión humana antes de aplicar resultados automáticos?"
+        ])
+
+    if "audit" in categories:
+        questions.extend([
+            "¿Qué acciones deben quedar registradas en auditoría?",
+            "¿Cuánto tiempo se deben conservar los eventos?",
+            "¿Quién puede consultar el historial y con qué filtros?",
+            "¿Los logs deben ser inmutables para cumplimiento?"
+        ])
+
+    if "performance" in categories:
+        questions.extend([
+            "¿Qué métrica define que la app ya es suficientemente rápida?",
+            "¿Dónde notas lentitud: carga inicial, consultas, navegación o procesos?",
+            "¿Hay monitoreo actual para comparar antes y después?",
+            "¿Qué endpoints o pantallas son más críticos para optimizar?"
+        ])
+
+    if "api" in categories:
+        questions.extend([
+            "¿Qué sistemas o clientes consumirán la API?",
+            "¿Necesitas versionado, documentación pública o rate limiting?",
+            "¿Qué errores deben manejarse explícitamente?",
+            "¿La integración requiere webhooks, polling o jobs asíncronos?"
         ])
     
     # Preguntas generales
@@ -358,6 +684,22 @@ def generate_estimate(categories: Set[str]) -> Estimate:
         breakdown["pagos"] = "2-3 días"
     if "database" in categories:
         breakdown["database"] = "1-2 días"
+    if "reports" in categories:
+        breakdown["reportes"] = "1-2 días"
+    if "files" in categories:
+        breakdown["archivos"] = "1-2 días"
+    if "notifications" in categories:
+        breakdown["notificaciones"] = "1-2 días"
+    if "realtime" in categories:
+        breakdown["tiempo_real"] = "2-3 días"
+    if "ai" in categories:
+        breakdown["ia"] = "2-4 días"
+    if "audit" in categories:
+        breakdown["auditoria"] = "1-2 días"
+    if "performance" in categories:
+        breakdown["rendimiento"] = "1-3 días"
+    if "api" in categories:
+        breakdown["api_backend"] = "1-2 días"
     breakdown["testing"] = "0.5-1 día"
     
     return Estimate(
@@ -414,6 +756,78 @@ def generate_implementation_plan(categories: Set[str]) -> List[ImplementationSte
             task="Implementar integración de pagos y webhooks",
             duration="6-8 horas",
             dependencies=[f"step {step_num-1}"]
+        ))
+        step_num += 1
+
+    if "api" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Definir contrato de API, validaciones y manejo de errores",
+            duration="2-3 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+
+    if "reports" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Definir estructura de reportes, filtros y permisos de exportación",
+            duration="2-4 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+
+    if "files" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Implementar flujo de carga, validación y almacenamiento de archivos",
+            duration="4-8 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+
+    if "notifications" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Configurar proveedor y plantillas de notificaciones",
+            duration="3-5 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+
+    if "realtime" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Diseñar eventos y canales para comunicación en tiempo real",
+            duration="4-6 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+
+    if "ai" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Evaluar proveedor/modelo de IA e integrar endpoint de inferencia",
+            duration="6-10 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+
+    if "audit" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Implementar registro de eventos auditables y consultas de historial",
+            duration="4-6 horas",
+            dependencies=[]
+        ))
+        step_num += 1
+
+    if "performance" in categories:
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Medir baseline, identificar cuellos de botella y aplicar optimizaciones",
+            duration="4-8 horas",
+            dependencies=[]
         ))
         step_num += 1
     
@@ -474,6 +888,22 @@ def generate_client_reply(
         topics.append("sistema de pagos")
     if "database" in categories:
         topics.append("base de datos")
+    if "reports" in categories:
+        topics.append("reportes/exportación")
+    if "files" in categories:
+        topics.append("manejo de archivos")
+    if "notifications" in categories:
+        topics.append("notificaciones")
+    if "realtime" in categories:
+        topics.append("funcionalidad en tiempo real")
+    if "ai" in categories:
+        topics.append("IA/automatización")
+    if "audit" in categories:
+        topics.append("auditoría")
+    if "performance" in categories:
+        topics.append("rendimiento")
+    if "api" in categories:
+        topics.append("API/backend")
     
     topics_str = ", ".join(topics) if topics else "las funcionalidades solicitadas"
     
@@ -555,6 +985,70 @@ def generate_checklist(categories: Set[str]) -> List[str]:
             "✓ Configurar backup automático",
             "✓ Testing de integridad de datos"
         ])
+
+    if "reports" in categories:
+        checklist.extend([
+            "✓ Definir campos y filtros de reportes",
+            "✓ Validar permisos de exportación",
+            "✓ Implementar generación de PDF/Excel/CSV",
+            "✓ Probar reportes con volúmenes grandes"
+        ])
+
+    if "files" in categories:
+        checklist.extend([
+            "✓ Definir tipos y tamaños permitidos",
+            "✓ Implementar carga y validación de archivos",
+            "✓ Configurar almacenamiento y permisos",
+            "✓ Probar errores de carga y descarga"
+        ])
+
+    if "notifications" in categories:
+        checklist.extend([
+            "✓ Definir eventos de notificación",
+            "✓ Configurar proveedor de envío",
+            "✓ Crear plantillas y preferencias",
+            "✓ Probar entregabilidad y reintentos"
+        ])
+
+    if "realtime" in categories:
+        checklist.extend([
+            "✓ Definir eventos y canales en tiempo real",
+            "✓ Implementar conexión y reconexión",
+            "✓ Persistir historial si aplica",
+            "✓ Probar concurrencia y latencia"
+        ])
+
+    if "ai" in categories:
+        checklist.extend([
+            "✓ Seleccionar proveedor/modelo de IA",
+            "✓ Definir criterios de precisión",
+            "✓ Implementar inferencia y manejo de errores",
+            "✓ Validar privacidad y consentimiento"
+        ])
+
+    if "audit" in categories:
+        checklist.extend([
+            "✓ Definir eventos auditables",
+            "✓ Implementar escritura de logs",
+            "✓ Crear filtros de consulta de historial",
+            "✓ Validar integridad y retención"
+        ])
+
+    if "performance" in categories:
+        checklist.extend([
+            "✓ Medir baseline de rendimiento",
+            "✓ Identificar cuellos de botella",
+            "✓ Aplicar caché/optimización",
+            "✓ Comparar métricas antes y después"
+        ])
+
+    if "api" in categories:
+        checklist.extend([
+            "✓ Definir contrato de API",
+            "✓ Implementar validación de payloads",
+            "✓ Documentar endpoints y errores",
+            "✓ Probar integración con consumidores"
+        ])
     
     # Tareas generales
     checklist.extend([
@@ -605,7 +1099,11 @@ def generate_mock_scope_contract(client_request: str, repo_context: Optional[str
     )
     
     # Generar resumen del request
-    request_summary = f"El cliente solicita cambios relacionados con: {', '.join(categories) if categories else 'funcionalidades generales'}"
+    if categories:
+        labels = [CATEGORY_LABELS.get(category, category) for category in sorted(categories)]
+        request_summary = f"El cliente solicita: {client_request.strip()} Áreas detectadas: {', '.join(labels)}."
+    else:
+        request_summary = f"El cliente solicita: {client_request.strip()} Se requiere aclarar alcance porque no hay detalles técnicos suficientes."
     
     return ScopeContract(
         requestSummary=request_summary,

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models.schemas import ScopeAnalysisRequest, ScopeAnalysisResponse
-from services.mock_service import generate_mock_scope_contract
+from services.analysis_service import generate_scope_contract
 
 router = APIRouter(prefix="/api/scope", tags=["scope"])
 
@@ -21,8 +21,8 @@ async def analyze_scope(request: ScopeAnalysisRequest):
     - Respuesta profesional lista para enviar
     - Checklist de tareas
     
-    **Para el MVP del hackathon, retorna datos mock realistas.**
-    En producción, esto usaría IBM Bob para análisis real del repositorio.
+    Usa IBM Bob Shell cuando está configurado con BOBSHELL_API_KEY.
+    Si Bob no está disponible, usa un analizador local determinístico para demo.
     """
     try:
         # Validación adicional (Pydantic ya valida que clientRequest existe)
@@ -32,8 +32,8 @@ async def analyze_scope(request: ScopeAnalysisRequest):
                 detail="El campo 'clientRequest' no puede estar vacío"
             )
         
-        # Generar Scope Contract mock
-        scope_contract = generate_mock_scope_contract(
+        # Generar Scope Contract con Bob si está configurado, o fallback local
+        scope_contract = generate_scope_contract(
             client_request=request.clientRequest,
             repo_context=request.repoContext
         )

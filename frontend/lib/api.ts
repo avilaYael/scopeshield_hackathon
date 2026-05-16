@@ -2,10 +2,12 @@ import { AnalyzeRequest, ScopeContract } from '@/types/scopeContract';
 import { mockScopeContract } from './mockData';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
+const USE_MOCK_FALLBACK = process.env.NEXT_PUBLIC_USE_MOCK_FALLBACK === 'true';
 
 /**
  * Analyze a client request and generate a Scope Contract
- * Tries to call the real backend API first, falls back to mock data if it fails
+ * Tries to call the real backend API first.
+ * The old fixed demo fallback is opt-in to avoid showing demo data for custom requests.
  */
 export async function analyzeScopeRequest(
   request: AnalyzeRequest
@@ -33,11 +35,17 @@ export async function analyzeScopeRequest(
     
     throw new Error('Invalid response format from API');
   } catch (error) {
-    console.warn('Backend API call failed, using mock data as fallback:', error);
-    
-    // Fallback to mock data with a small delay to simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return mockScopeContract;
+    console.error('Backend API call failed:', error);
+
+    if (USE_MOCK_FALLBACK) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return {
+        ...mockScopeContract,
+        requestSummary: `Modo demo local: no se pudo conectar con el backend. Petición recibida: ${request.clientRequest}`,
+      };
+    }
+
+    throw new Error('Backend API unavailable. Start the backend on port 8001 and try again.');
   }
 }
 
@@ -50,7 +58,7 @@ export async function checkApiHealth(): Promise<boolean> {
       method: 'GET',
     });
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

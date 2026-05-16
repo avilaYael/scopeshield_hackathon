@@ -12,36 +12,6 @@ export default function Home() {
   const [error, setError] = useState('');
   const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
 
-  const handleAnalyze = async () => {
-    // Validate that user entered a client request
-    if (!clientRequest.trim()) {
-      setError('Please enter a client request');
-      return;
-    }
-
-    setError('');
-    setIsAnalyzing(true);
-
-    try {
-      const result = await analyzeScopeRequest({
-        clientRequest,
-        repoContext: repoContext || undefined,
-      });
-
-      // Store result in sessionStorage for the dashboard
-      sessionStorage.setItem('scopeContract', JSON.stringify(result));
-      
-      // Navigate to dashboard
-      router.push('/dashboard');
-    } catch (err) {
-      // Show useful error message if the request fails
-      setError('Unable to analyze scope. The backend may be unavailable. Please check that the backend is running or try again later.');
-      console.error('Error analyzing scope:', err);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
   // Múltiples ejemplos de demo para variedad
   const demoExamples = [
     {
@@ -68,13 +38,37 @@ export default function Home() {
 
   const currentDemo = demoExamples[currentDemoIndex];
 
+  const handleAnalyze = async () => {
+    if (!clientRequest.trim()) {
+      setError('Please enter a client request');
+      return;
+    }
+
+    setError('');
+    setIsAnalyzing(true);
+
+    try {
+      const result = await analyzeScopeRequest({
+        clientRequest,
+        repoContext: repoContext || undefined,
+      });
+
+      sessionStorage.setItem('scopeContract', JSON.stringify(result));
+      router.push('/dashboard');
+    } catch (err) {
+      setError('Unable to analyze scope. The backend may be unavailable. Please check that the backend is running or try again later.');
+      console.error('Error analyzing scope:', err);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const loadExample = () => {
     setClientRequest(currentDemo.request);
     setRepoContext(currentDemo.context);
   };
 
   const tryDemo = async () => {
-    // Rotar al siguiente ejemplo para el próximo demo
     const nextIndex = (currentDemoIndex + 1) % demoExamples.length;
     setCurrentDemoIndex(nextIndex);
 
@@ -100,7 +94,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-zinc-950">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
-        {/* Header */}
         <header className="text-center mb-12">
           <h1 className="text-5xl font-bold text-zinc-50 mb-4 tracking-tight">
             ScopeShield
@@ -109,7 +102,6 @@ export default function Home() {
             Convert vague client requests into clear technical scope contracts
           </p>
           
-          {/* Try Demo Button - Prominent */}
           <button
             onClick={tryDemo}
             disabled={isAnalyzing}
@@ -138,7 +130,6 @@ export default function Home() {
           </p>
         </header>
 
-        {/* Main Input Card */}
         <div className="border border-zinc-800 rounded-lg p-6 bg-zinc-900/30 mb-6">
           <div className="mb-5">
             <label 
@@ -215,7 +206,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Info Cards */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
           <div className="border border-zinc-800 rounded-lg p-5 bg-zinc-900/30">
             <div className="text-blue-400 mb-3">
@@ -254,7 +244,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Footer */}
         <footer className="text-center text-xs text-zinc-500 font-mono">
           <p>© {new Date().getFullYear()} ScriptHunters. All rights reserved.</p>
         </footer>
