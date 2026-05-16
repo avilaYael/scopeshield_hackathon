@@ -10,6 +10,7 @@ export default function Home() {
   const [repoContext, setRepoContext] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState('');
+  const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
 
   const handleAnalyze = async () => {
     // Validate that user entered a client request
@@ -65,7 +66,6 @@ export default function Home() {
     }
   ];
 
-  const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
   const currentDemo = demoExamples[currentDemoIndex];
 
   const loadExample = () => {
