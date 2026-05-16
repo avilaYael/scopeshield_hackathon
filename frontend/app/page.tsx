@@ -41,23 +41,50 @@ export default function Home() {
     }
   };
 
-  const exampleRequest = "Solo agrega login con Google, cambia el dashboard y que se vea más moderno.";
+  // Múltiples ejemplos de demo para variedad
+  const demoExamples = [
+    {
+      request: "Solo agrega login con Google, cambia el dashboard y que se vea más moderno.",
+      context: "React + Node.js app"
+    },
+    {
+      request: "Necesito implementar un sistema de pagos con Stripe y que los usuarios puedan ver su historial de transacciones.",
+      context: "Next.js + PostgreSQL"
+    },
+    {
+      request: "Agrega notificaciones push y que los usuarios puedan subir archivos PDF.",
+      context: "Vue.js + Firebase"
+    },
+    {
+      request: "Implementa un chat en tiempo real y mejora el rendimiento de la base de datos.",
+      context: "React + Socket.io + MongoDB"
+    },
+    {
+      request: "Crea un sistema de roles y permisos, y agrega exportación de reportes en Excel.",
+      context: "Django + React + PostgreSQL"
+    }
+  ];
+
+  const [currentDemoIndex, setCurrentDemoIndex] = useState(0);
+  const currentDemo = demoExamples[currentDemoIndex];
 
   const loadExample = () => {
-    setClientRequest(exampleRequest);
-    setRepoContext('React + Node.js app');
+    setClientRequest(currentDemo.request);
+    setRepoContext(currentDemo.context);
   };
 
   const tryDemo = async () => {
-    setClientRequest(exampleRequest);
-    setRepoContext('React + Node.js app');
+    // Rotar al siguiente ejemplo para el próximo demo
+    const nextIndex = (currentDemoIndex + 1) % demoExamples.length;
+    setCurrentDemoIndex(nextIndex);
+
     setError('');
     setIsAnalyzing(true);
 
     try {
       const result = await analyzeScopeRequest({
-        clientRequest: exampleRequest,
-        repoContext: 'React + Node.js app',
+        clientRequest: currentDemo.request,
+        repoContext: currentDemo.context,
       });
 
       sessionStorage.setItem('scopeContract', JSON.stringify(result));
