@@ -48,16 +48,66 @@ export default function Home() {
     setRepoContext('React + Node.js app');
   };
 
+  const tryDemo = async () => {
+    setClientRequest(exampleRequest);
+    setRepoContext('React + Node.js app');
+    setError('');
+    setIsAnalyzing(true);
+
+    try {
+      const result = await analyzeScopeRequest({
+        clientRequest: exampleRequest,
+        repoContext: 'React + Node.js app',
+      });
+
+      sessionStorage.setItem('scopeContract', JSON.stringify(result));
+      router.push('/dashboard');
+    } catch (err) {
+      setError('Unable to analyze scope. The backend may be unavailable. Please check that the backend is running or try again later.');
+      console.error('Error analyzing scope:', err);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
-        <header className="text-center mb-12">
+        <header className="text-center mb-8">
           <h1 className="text-5xl font-bold text-slate-900 dark:text-slate-50 mb-4">
             ScopeShield
           </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-6">
             Convert vague client requests into clear technical scope contracts
+          </p>
+          
+          {/* Try Demo Button - Prominent */}
+          <button
+            onClick={tryDemo}
+            disabled={isAnalyzing}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-blue-400 disabled:to-blue-500 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
+          >
+            {isAnalyzing ? (
+              <>
+                <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Analyzing Demo...
+              </>
+            ) : (
+              <>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Try Demo Now
+              </>
+            )}
+          </button>
+          
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">
+            Or paste your own request below
           </p>
         </header>
 

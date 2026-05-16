@@ -61,22 +61,26 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header with Risk Score */}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
+      <div className="container mx-auto px-4 max-w-7xl">
+        {/* Header with Prominent Risk Score */}
         <DashboardHeader 
           riskScore={scopeContract.riskScore}
           onNewAnalysis={handleNewAnalysis}
         />
 
-        {/* Main Grid Layout */}
-        <div className="grid lg:grid-cols-3 gap-6">
+        {/* Priority Sections - Full Width */}
+        <div className="space-y-6 mb-6">
+          <RequestSummary summary={scopeContract.requestSummary} />
+          <HiddenScope items={scopeContract.hiddenScope} />
+          <TechnicalRisks risks={scopeContract.risks} />
+        </div>
+
+        {/* Two Column Layout for Supporting Info */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <RequestSummary summary={scopeContract.requestSummary} />
-            <HiddenScope items={scopeContract.hiddenScope} />
             <ImpactedAreas areas={scopeContract.impactedAreas} />
-            <TechnicalRisks risks={scopeContract.risks} />
             <ImplementationPlan steps={scopeContract.implementationPlan} />
           </div>
 
@@ -87,8 +91,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Full Width Sections */}
-        <div className="mt-6 space-y-6">
+        {/* Action Sections - Full Width */}
+        <div className="space-y-6">
           <ClientReply reply={scopeContract.clientReply} />
           <Checklist items={scopeContract.checklist} />
         </div>
