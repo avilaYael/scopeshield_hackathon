@@ -122,15 +122,16 @@ def generate_hidden_scope(categories: Set[str]) -> List[str]:
     """
     hidden_scope = []
     
-    if "auth" in categories:
-        hidden_scope.extend([
-            "Manejo de sesiones y tokens de autenticación",
-            "Migración de usuarios existentes al nuevo sistema",
-            "Actualización de rutas protegidas y middleware",
-            "Testing completo del flujo de autenticación",
-            "Configuración de credenciales en servicios externos",
-            "Manejo de errores y casos edge en autenticación"
-        ])
+    # REMOVED: Hardcoded auth examples that were injecting into every response
+    # if "auth" in categories:
+    #     hidden_scope.extend([
+    #         "Manejo de sesiones y tokens de autenticación",
+    #         "Migración de usuarios existentes al nuevo sistema",
+    #         "Actualización de rutas protegidas y middleware",
+    #         "Testing completo del flujo de autenticación",
+    #         "Configuración de credenciales en servicios externos",
+    #         "Manejo de errores y casos edge en autenticación"
+    #     ])
     
     if "theme" in categories:
         hidden_scope.extend([
@@ -800,22 +801,23 @@ def generate_implementation_plan(categories: Set[str]) -> List[ImplementationSte
         ))
         step_num += 1
     
-    if "auth" in categories:
-        steps.append(ImplementationStep(
-            step=step_num,
-            task="Configurar servicio de autenticación y obtener credenciales",
-            duration="1-2 horas",
-            dependencies=[]
-        ))
-        step_num += 1
-        
-        steps.append(ImplementationStep(
-            step=step_num,
-            task="Implementar flujo de autenticación en backend",
-            duration="4-6 horas",
-            dependencies=[f"step {step_num-1}"]
-        ))
-        step_num += 1
+    # REMOVED: Hardcoded auth implementation steps that were injecting into every response
+    # if "auth" in categories:
+    #     steps.append(ImplementationStep(
+    #         step=step_num,
+    #         task="Configurar servicio de autenticación y obtener credenciales",
+    #         duration="1-2 horas",
+    #         dependencies=[]
+    #     ))
+    #     step_num += 1
+    #
+    #     steps.append(ImplementationStep(
+    #         step=step_num,
+    #         task="Implementar flujo de autenticación en backend",
+    #         duration="4-6 horas",
+    #         dependencies=[f"step {step_num-1}"]
+    #     ))
+    #     step_num += 1
     
     if "payment" in categories:
         steps.append(ImplementationStep(
@@ -1018,17 +1020,18 @@ def generate_checklist(categories: Set[str]) -> List[str]:
     """
     checklist = []
     
-    if "auth" in categories:
-        checklist.extend([
-            "✓ Configurar servicio de autenticación",
-            "✓ Obtener credenciales y API keys",
-            "✓ Implementar estrategia de autenticación en backend",
-            "✓ Crear endpoints de autenticación",
-            "✓ Actualizar modelo de usuario",
-            "✓ Implementar componente de login en frontend",
-            "✓ Manejar sesiones y tokens",
-            "✓ Actualizar middleware de rutas protegidas"
-        ])
+    # REMOVED: Hardcoded auth checklist items that were injecting into every response
+    # if "auth" in categories:
+    #     checklist.extend([
+    #         "✓ Configurar servicio de autenticación",
+    #         "✓ Obtener credenciales y API keys",
+    #         "✓ Implementar estrategia de autenticación en backend",
+    #         "✓ Crear endpoints de autenticación",
+    #         "✓ Actualizar modelo de usuario",
+    #         "✓ Implementar componente de login en frontend",
+    #         "✓ Manejar sesiones y tokens",
+    #         "✓ Actualizar middleware de rutas protegidas"
+    #     ])
     
     if "theme" in categories:
         checklist.extend([
