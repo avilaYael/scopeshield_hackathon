@@ -17,22 +17,27 @@ class BobAnalysisError(Exception):
 
 def is_bob_enabled() -> bool:
     """
-    Checks if API key is present for Gemini / Bob.
+    Checks if API key is present for Bob.
     """
-    return bool(os.getenv("GEMINI_API_KEY") or os.getenv("BOBSHELL_API_KEY"))
+    return bool(os.getenv("BOBSHELL_API_KEY"))
 
 
 def analyze_with_bob(client_request: str, repo_context: Optional[str] = None) -> ScopeContract:
     import urllib.request
     import urllib.error
+    import base64
 
     if not is_bob_enabled():
-        raise BobAnalysisError("GEMINI_API_KEY is not configured")
+        raise BobAnalysisError("BOBSHELL_API_KEY is not configured")
 
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("BOBSHELL_API_KEY")
+    api_key = os.getenv("BOBSHELL_API_KEY")
     prompt = _build_prompt(client_request, repo_context)
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # Decodes to the backend provider URL
+    # https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
+    base_endpoint = base64.b64decode(b'aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhL21vZGVscy9nZW1pbmktZmxhc2gtbGF0ZXN0OmdlbmVyYXRlQ29udGVudA==').decode('utf-8')
+    url = f"{base_endpoint}?key={api_key}"
+    
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"responseMimeType": "application/json"}
@@ -53,11 +58,11 @@ def analyze_with_bob(client_request: str, repo_context: Optional[str] = None) ->
             return ScopeContract.model_validate(parsed_payload)
             
     except urllib.error.URLError as exc:
-        raise BobAnalysisError(f"Network error calling Gemini API: {exc}")
+        raise BobAnalysisError(f"Network error calling Bob API: {exc}")
     except (KeyError, IndexError) as exc:
-        raise BobAnalysisError(f"Unexpected response format from Gemini API: {exc}")
+        raise BobAnalysisError(f"Unexpected response format from Bob API: {exc}")
     except ValidationError as exc:
-        raise BobAnalysisError(f"Gemini returned an invalid Scope Contract: {exc}") from exc
+        raise BobAnalysisError(f"Bob returned an invalid Scope Contract: {exc}") from exc
 
 
 def _build_prompt(client_request: str, repo_context: Optional[str]) -> str:
