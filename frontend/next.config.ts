@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   // Configure webpack to ignore backend directories
   webpack: (config, { isServer }) => {
     if (!isServer) {
