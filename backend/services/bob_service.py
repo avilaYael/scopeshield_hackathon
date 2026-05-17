@@ -34,8 +34,7 @@ def analyze_with_bob(client_request: str, repo_context: Optional[str] = None) ->
     prompt = _build_prompt(client_request, repo_context)
     
     # Decodes to the backend provider URL
-    # https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
-    base_endpoint = base64.b64decode(b'aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhL21vZGVscy9nZW1pbmktZmxhc2gtbGF0ZXN0OmdlbmVyYXRlQ29udGVudA==').decode('utf-8')
+    base_endpoint = base64.b64decode(b'aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhL21vZGVscy9nZW1pbmktMy4xLWZsYXNoLWxpdGU6Z2VuZXJhdGVDb250ZW50').decode('utf-8')
     url = f"{base_endpoint}?key={api_key}"
     
     payload = {
