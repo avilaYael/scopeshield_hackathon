@@ -1,4 +1,4 @@
-# 🛡️ ScopeShield - Convierte Solicitudes Ambiguas en Contratos Técnicos Claros
+# 🛡️ ScopeShield - Transform Vague Requests into Clear Technical Contracts
 
 ![ScopeShield Banner](https://img.shields.io/badge/ScopeShield-Hackathon%20Project-blue?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.9+-green?style=flat-square)
@@ -6,24 +6,24 @@
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=flat-square)
 
-## 🎯 ¿Qué es ScopeShield?
+## 🎯 What is ScopeShield?
 
-**ScopeShield** es una herramienta inteligente que protege a desarrolladores y equipos de los peligros del scope creep. Convierte solicitudes vagas de clientes en contratos de scope técnicos detallados, identificando:
+**ScopeShield** is an intelligent tool that protects developers and teams from the dangers of scope creep. It converts vague client requests into detailed technical scope contracts, identifying:
 
-- 🔍 **Scope Oculto** - Tareas no mencionadas explícitamente
-- ⚠️ **Riesgos Técnicos** - Problemas potenciales antes de empezar
-- ❓ **Preguntas Clarificadoras** - Lo que debes preguntar antes de comprometerte
-- 📊 **Estimaciones Realistas** - Tiempo y complejidad basados en análisis
-- 📋 **Plan de Implementación** - Pasos detallados para ejecutar el proyecto
-- ✉️ **Respuesta Profesional** - Email listo para enviar al cliente
+- 🔍 **Hidden Scope** - Tasks not explicitly mentioned
+- ⚠️ **Technical Risks** - Potential problems before starting
+- ❓ **Clarifying Questions** - What you should ask before committing
+- 📊 **Realistic Estimates** - Time and complexity based on analysis
+- 📋 **Implementation Plan** - Detailed steps to execute the project
+- ✉️ **Professional Response** - Ready-to-send email for the client
 
-## 🚀 Inicio Rápido
+## 🚀 Quick Start
 
-### Opción 1: Guía Rápida (Recomendado)
+### Option 1: Quick Guide (Recommended)
 
-Lee la [**Guía de Inicio Rápido (QUICKSTART.md)**](./QUICKSTART.md) para instrucciones paso a paso.
+Read the [**Quick Start Guide (QUICKSTART.md)**](./QUICKSTART.md) for step-by-step instructions.
 
-### Opción 2: Comandos Rápidos
+### Option 2: Quick Commands
 
 **Backend (Terminal 1):**
 ```bash
@@ -41,138 +41,140 @@ npm install
 npm run dev
 ```
 
-**Accede a:**
+**Access:**
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8001
-- Documentación API: http://localhost:8001/docs
+- API Documentation: http://localhost:8001/docs
 
-## 📸 Capturas de Pantalla
+## 📸 Screenshots
 
-### Página Principal
-Interfaz limpia y moderna para ingresar solicitudes de clientes.
+### Main Page
+Clean and modern interface to enter client requests.
 
-### Dashboard de Análisis
-Vista completa del análisis con 10 secciones detalladas:
-- Resumen de la solicitud
-- Puntuación de riesgo
-- Scope oculto identificado
-- Áreas impactadas del código
-- Riesgos técnicos
-- Preguntas clarificadoras
-- Estimación de tiempo
-- Plan de implementación
-- Respuesta para el cliente
-- Checklist de tareas
+### Analysis Dashboard
+Complete analysis view with 10 detailed sections:
+- Request summary
+- Risk score
+- Identified hidden scope
+- Impacted code areas
+- Technical risks
+- Clarifying questions
+- Time estimation
+- Implementation plan
+- Client response
+- Task checklist
 
-## 🏗️ Arquitectura del Proyecto
+## 🏗️ Project Architecture
 
 ```
 ScopeShield/
 │
-├── 📁 backend/              # API FastAPI (Python)
-│   ├── main.py             # Punto de entrada
-│   ├── models/             # Modelos Pydantic
-│   ├── routers/            # Endpoints REST
-│   ├── services/           # Lógica de negocio
-│   └── requirements.txt    # Dependencias
+├── 📁 backend/              # FastAPI API (Python)
+│   ├── main.py             # Entry point
+│   ├── models/             # Pydantic models
+│   ├── routers/            # REST endpoints
+│   ├── services/           # Business logic
+│   └── requirements.txt    # Dependencies
 │
-├── 📁 frontend/             # Aplicación Next.js (TypeScript)
-│   ├── app/                # Páginas y rutas
-│   ├── components/         # Componentes React
-│   ├── lib/                # API client y utilidades
-│   ├── types/              # Tipos TypeScript
-│   └── package.json        # Dependencias
+├── 📁 frontend/             # Next.js Application (TypeScript)
+│   ├── app/                # Pages and routes
+│   ├── components/         # React components
+│   ├── lib/                # API client and utilities
+│   ├── types/              # TypeScript types
+│   └── package.json        # Dependencies
 │
-├── 📁 docs/                 # Documentación del proyecto
-├── test_backend_integration.py  # Script de pruebas
-├── QUICKSTART.md           # Guía de inicio rápido
-└── README.md               # Este archivo
+├── 📁 docs/                 # Project documentation
+├── 📁 CHATS-BOB/           # IBM Bob conversation logs
+├── test_backend_integration.py  # Test script
+├── QUICKSTART.md           # Quick start guide
+└── README.md               # This file
 ```
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Tech Stack
 
 ### Backend
-- **FastAPI** - Framework web moderno y rápido
-- **Pydantic** - Validación de datos automática
-- **Uvicorn** - Servidor ASGI de alto rendimiento
-- **Python 3.9+** - Lenguaje base
+- **FastAPI** - Modern and fast web framework
+- **Pydantic** - Automatic data validation
+- **Uvicorn** - High-performance ASGI server
+- **Python 3.9+** - Base language
 
 ### Frontend
-- **Next.js 14** - Framework React con SSR
-- **TypeScript** - Tipado estático
-- **Tailwind CSS** - Estilos utility-first
-- **React Hooks** - Gestión de estado
+- **Next.js 14** - React framework with SSR
+- **TypeScript** - Static typing
+- **Tailwind CSS** - Utility-first styles
+- **React Hooks** - State management
 
-## 🎨 Características Principales
+## 🎨 Key Features
 
-### ✅ Sistema de Fallback Inteligente
-El frontend intenta conectarse al backend automáticamente. Si no está disponible, usa datos mock para permitir desarrollo sin interrupciones.
+### ✅ Intelligent Fallback System
+The frontend automatically attempts to connect to the backend. If unavailable, it uses mock data to allow uninterrupted development.
 
-### ✅ Análisis Completo de Scope
-- Identifica tareas ocultas no mencionadas
-- Calcula riesgo técnico (0-10)
-- Detecta áreas del código impactadas
-- Genera preguntas inteligentes
+### ✅ Complete Scope Analysis
+- Identifies hidden unmentioned tasks
+- Calculates technical risk (0-10)
+- Detects impacted code areas
+- Generates intelligent questions
 
-### ✅ Estimaciones Realistas
-- Desglose de tiempo por tarea
-- Clasificación de complejidad
-- Identificación de dependencias
+### ✅ Realistic Estimates
+- Time breakdown per task
+- Complexity classification
+- Dependency identification
 
-### ✅ Respuesta Profesional
-- Email formateado listo para enviar
-- Tono profesional y claro
-- Incluye todas las preguntas necesarias
+### ✅ Professional Response
+- Formatted email ready to send
+- Professional and clear tone
+- Includes all necessary questions
 
-### ✅ Plan de Implementación
-- Pasos ordenados y numerados
-- Duración estimada por paso
-- Dependencias entre tareas
+### ✅ Implementation Plan
+- Ordered and numbered steps
+- Estimated duration per step
+- Task dependencies
 
-### ✅ Checklist Accionable
-- Lista de verificación completa
-- Formato markdown para copiar
-- Tareas organizadas lógicamente
+### ✅ Actionable Checklist
+- Complete verification list
+- Markdown format for copying
+- Logically organized tasks
 
-## 📊 Ejemplo de Uso
+## 📊 Usage Example
 
-**Input del Cliente:**
+**Client Input:**
 ```
-"Solo agrega login con Google, cambia el dashboard y que se vea más moderno."
+"Just add Google login, change the dashboard and make it look more modern."
 ```
 
-**Output de ScopeShield:**
-- ✅ Identifica 8+ tareas ocultas (manejo de sesiones, migración de usuarios, etc.)
-- ✅ Calcula riesgo técnico: 7.5/10
-- ✅ Genera 6 preguntas clarificadoras
-- ✅ Estima 3-5 días de trabajo
-- ✅ Crea plan de 6 pasos detallado
-- ✅ Prepara respuesta profesional para el cliente
+**ScopeShield Output:**
+- ✅ Identifies 8+ hidden tasks (session handling, user migration, etc.)
+- ✅ Calculates technical risk: 7.5/10
+- ✅ Generates 6 clarifying questions
+- ✅ Estimates 3-5 days of work
+- ✅ Creates detailed 6-step plan
+- ✅ Prepares professional response for client
 
 ## 🧪 Testing
 
-### Probar Backend
+### Test Backend
 ```bash
 python test_backend_integration.py
 ```
 
-### Probar Frontend
+### Test Frontend
 ```bash
 cd frontend
 npm run dev
-# Abre http://localhost:3000 y haz clic en "Try Demo Now"
+# Open http://localhost:3000 and click "Try Demo Now"
 ```
 
-## 📚 Documentación
+## 📚 Documentation
 
-- [**QUICKSTART.md**](./QUICKSTART.md) - Guía de inicio rápido
-- [**backend/README.md**](./backend/README.md) - Documentación del backend
-- [**frontend/INTEGRATION.md**](./frontend/INTEGRATION.md) - Guía de integración
-- [**docs/**](./docs/) - Documentación adicional del proyecto
+- [**QUICKSTART.md**](./QUICKSTART.md) - Quick start guide
+- [**backend/README.md**](./backend/README.md) - Backend documentation
+- [**frontend/INTEGRATION.md**](./frontend/INTEGRATION.md) - Integration guide
+- [**docs/**](./docs/) - Additional project documentation
+- [**CHATS-BOB/**](./CHATS-BOB/) - IBM Bob conversation logs for hackathon
 
-## 🔧 Configuración
+## 🔧 Configuration
 
-### Variables de Entorno
+### Environment Variables
 
 **Backend (.env):**
 ```env
@@ -185,69 +187,72 @@ NODE_ENV=development
 NEXT_PUBLIC_API_URL=http://localhost:8001
 ```
 
-## 🚧 Estado del Proyecto
+## 🚧 Project Status
 
-### ✅ Completado (MVP)
-- [x] Backend API con FastAPI
-- [x] Frontend con Next.js y TypeScript
-- [x] Sistema de fallback automático
-- [x] 10 secciones del dashboard
-- [x] Componentes reutilizables
-- [x] Documentación completa
-- [x] Script de pruebas de integración
+### ✅ Completed (MVP)
+- [x] FastAPI Backend API
+- [x] Next.js and TypeScript Frontend
+- [x] Automatic fallback system
+- [x] 10 dashboard sections
+- [x] Reusable components
+- [x] Complete documentation
+- [x] Integration test script
+- [x] IBM Bob conversation logs
 
-### 🔜 Próximas Mejoras
-- [ ] Integración con IBM Bob para análisis real de repositorios
-- [ ] Detección inteligente de patrones de código
-- [ ] Base de datos para historial de análisis
-- [ ] Sistema de autenticación de usuarios
-- [ ] Exportar reportes (PDF, Markdown)
-- [ ] Análisis de múltiples repositorios
-- [ ] Integración con GitHub/GitLab
+### 🔜 Future Improvements
+- [ ] IBM Bob integration for real repository analysis
+- [ ] Intelligent code pattern detection
+- [ ] Database for analysis history
+- [ ] User authentication system
+- [ ] Export reports (PDF, Markdown)
+- [ ] Multiple repository analysis
+- [ ] GitHub/GitLab integration
 
-## 👥 Equipo ScriptHunters
+## 👥 ScriptHunters Team
 
-Proyecto desarrollado para el Hackathon ScopeShield.
+Project developed for the ScopeShield Hackathon.
 
-## 🤝 Contribuir
+## 🤝 Contributing
 
-Este es un proyecto de hackathon. Si quieres contribuir:
+This is a hackathon project. If you want to contribute:
 
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Fork the repository
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📄 Licencia
+## 📄 License
 
-MIT License - Ver archivo [LICENSE](./LICENSE) para más detalles.
+MIT License - See [LICENSE](./LICENSE) file for details.
 
-## 🎤 Materiales para el Hackathon
+## 🎤 Hackathon Materials
 
-¿Vas a presentar ScopeShield en el hackathon? Tenemos todo listo:
+Presenting ScopeShield at the hackathon? We have everything ready:
 
-- 📋 [**Script de Demo**](./docs/04-demo-hackathon.md) - Pitch de 30s y demo de 2 minutos
-- 📊 [**Slides**](./docs/05-slides-demo.md) - 10 slides diseñadas con timing exacto
-- ❓ [**FAQ para Jueces**](./docs/06-faq-jueces.md) - 15+ preguntas con respuestas preparadas
-- 📚 [**Índice de Docs**](./docs/README.md) - Toda la documentación organizada
+- 📋 [**Demo Script**](./docs/04-demo-hackathon.md) - 30s pitch and 2-minute demo
+- 📊 [**Slides**](./docs/05-slides-demo.md) - 10 slides with exact timing
+- ❓ [**FAQ for Judges**](./docs/06-faq-jueces.md) - 15+ questions with prepared answers
+- 🤖 [**IBM Bob Usage Report**](./docs/07-ibm-bob-usage-report.md) - Complete AI collaboration documentation
+- 💬 [**Conversation Logs**](./CHATS-BOB/) - Full IBM Bob chat history
+- 📚 [**Docs Index**](./docs/README.md) - All documentation organized
 
-##  Soporte
+## 🆘 Support
 
-¿Problemas? Revisa:
-1. [QUICKSTART.md](./QUICKSTART.md) - Guía de inicio
-2. [INSTRUCCIONES_EJECUCION.md](./INSTRUCCIONES_EJECUCION.md) - Pasos detallados
-3. [backend/README.md](./backend/README.md) - Documentación del backend
-4. [docs/](./docs/) - Documentación completa del proyecto
+Having issues? Check:
+1. [QUICKSTART.md](./QUICKSTART.md) - Start guide
+2. [INSTRUCCIONES_EJECUCION.md](./INSTRUCCIONES_EJECUCION.md) - Detailed steps
+3. [backend/README.md](./backend/README.md) - Backend documentation
+4. [docs/](./docs/) - Complete project documentation
 
-## 🎉 Agradecimientos
+## 🎉 Acknowledgments
 
-- FastAPI por su excelente framework
-- Next.js por hacer el desarrollo frontend tan fácil
-- La comunidad open source por las herramientas increíbles
+- FastAPI for their excellent framework
+- Next.js for making frontend development so easy
+- The open source community for the incredible tools
 
 ---
 
-**Hecho con ❤️ por el equipo ScriptHunters**
+**Made with ❤️ by the ScriptHunters team**
 
-[⬆ Volver arriba](#-scopeshield---convierte-solicitudes-ambiguas-en-contratos-técnicos-claros)
+[⬆ Back to top](#️-scopeshield---transform-vague-requests-into-clear-technical-contracts)
