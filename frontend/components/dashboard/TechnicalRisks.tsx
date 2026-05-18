@@ -8,14 +8,14 @@ interface TechnicalRisksProps {
 
 export default function TechnicalRisks({ risks }: TechnicalRisksProps) {
   const getSeverityVariant = (severity: string) => {
-    if (severity === 'Alta') return 'danger';
-    if (severity === 'Media') return 'warning';
+    if (severity === 'High') return 'danger';
+    if (severity === 'Medium') return 'warning';
     return 'success';
   };
 
-  // Sort risks by severity (Alta first, then Media, then Baja)
+  // Sort risks by severity (High first, then Medium, then Low)
   const sortedRisks = [...risks].sort((a, b) => {
-    const severityOrder = { 'Alta': 0, 'Media': 1, 'Baja': 2 };
+    const severityOrder = { 'High': 0, 'Medium': 1, 'Low': 2 };
     return severityOrder[a.severity as keyof typeof severityOrder] - severityOrder[b.severity as keyof typeof severityOrder];
   });
 

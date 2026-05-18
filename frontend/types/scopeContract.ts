@@ -3,13 +3,13 @@
 export interface ImpactedArea {
   area: string;
   files: string[];
-  complexity: 'Baja' | 'Media' | 'Alta';
+  complexity: 'Low' | 'Medium' | 'High';
 }
 
 export interface Risk {
   type: string;
   description: string;
-  severity: 'Baja' | 'Media' | 'Alta';
+  severity: 'Low' | 'Medium' | 'High';
 }
 
 export interface Estimate {

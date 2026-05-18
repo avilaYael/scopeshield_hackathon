@@ -8,8 +8,8 @@ interface ImpactedAreasProps {
 
 export default function ImpactedAreas({ areas }: ImpactedAreasProps) {
   const getComplexityVariant = (complexity: string) => {
-    if (complexity === 'Alta') return 'danger';
-    if (complexity === 'Media') return 'warning';
+    if (complexity === 'High') return 'danger';
+    if (complexity === 'Medium') return 'warning';
     return 'success';
   };
 

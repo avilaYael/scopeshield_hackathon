@@ -12,6 +12,7 @@ from models.schemas import (
 # Definición de palabras clave por categoría
 KEYWORDS = {
     "auth": ["login", "auth", "autenticacion", "autenticación", "google", "oauth", "jwt", "usuario", "usuarios", "user", "users", "sesion", "sesión", "session", "password", "contraseña", "registro", "signup", "signin"],
+    "theme": ["dark mode", "modo oscuro", "dark", "oscuro", "theme", "tema", "light mode", "modo claro", "colores", "colors", "paleta", "palette", "toggle", "switch tema"],
     "frontend": ["dashboard", "ui", "modern", "moderno", "design", "diseño", "responsive", "interfaz", "interface", "frontend", "react", "vue", "angular"],
     "payment": ["payment", "payments", "pago", "pagos", "subscription", "subscriptions", "suscripcion", "suscripción", "suscripciones", "stripe", "paypal", "billing", "facturacion", "facturación", "checkout", "tarjeta", "tarjetas", "card", "cards"],
     "database": ["database", "base de datos", "bases de datos", "data", "datos", "records", "registros", "migration", "migrations", "migracion", "migración", "migraciones", "sql", "mongodb", "postgres", "postgresql"],
@@ -28,6 +29,7 @@ KEYWORDS = {
 # Patrones de archivos/carpetas por tipo
 REPO_PATTERNS = {
     "auth": ["auth", "login", "session", "passport", "jwt", "oauth"],
+    "theme": ["theme", "themes", "context", "styles", "tailwind", "css"],
     "frontend": ["components", "views", "pages", "dashboard", "ui", "styles", "css"],
     "payment": ["payment", "checkout", "stripe", "billing", "subscription"],
     "database": ["models", "migrations", "seeds", "schema", "database", "db"],
@@ -44,6 +46,7 @@ REPO_PATTERNS = {
 
 CATEGORY_LABELS = {
     "auth": "Autenticación",
+    "theme": "Interfaz de Usuario y Estilos",
     "frontend": "Frontend/UI",
     "payment": "Pagos",
     "database": "Base de datos",
@@ -119,14 +122,23 @@ def generate_hidden_scope(categories: Set[str]) -> List[str]:
     """
     hidden_scope = []
     
-    if "auth" in categories:
+    # REMOVED: Hardcoded auth examples that were injecting into every response
+    # if "auth" in categories:
+    #     hidden_scope.extend([
+    #         "Manejo de sesiones y tokens de autenticación",
+    #         "Migración de usuarios existentes al nuevo sistema",
+    #         "Actualización de rutas protegidas y middleware",
+    #         "Testing completo del flujo de autenticación",
+    #         "Configuración de credenciales en servicios externos",
+    #         "Manejo de errores y casos edge en autenticación"
+    #     ])
+    
+    if "theme" in categories:
         hidden_scope.extend([
-            "Manejo de sesiones y tokens de autenticación",
-            "Migración de usuarios existentes al nuevo sistema",
-            "Actualización de rutas protegidas y middleware",
-            "Testing completo del flujo de autenticación",
-            "Configuración de credenciales en servicios externos",
-            "Manejo de errores y casos edge en autenticación"
+            "Configuración de estado global para el manejo del tema (Light/Dark)",
+            "Refactorización de componentes base para soportar clases condicionales",
+            "Implementación del componente Toggle en la barra de navegación",
+            "Validación de paleta de colores y contraste adaptativo"
         ])
     
     if "frontend" in categories:
@@ -241,6 +253,14 @@ def generate_impacted_areas(categories: Set[str], repo_files: Optional[Dict[str,
             area="Autenticación",
             files=auth_files[:4],  # Limitar a 4 archivos
             complexity="Alta"
+        ))
+    
+    if "theme" in categories:
+        theme_files = repo_files.get("theme", ["context/ThemeContext.tsx", "components/Navbar.tsx", "tailwind.config.ts"])
+        areas.append(ImpactedArea(
+            area="Estilos y UI",
+            files=theme_files[:3],
+            complexity="Baja"
         ))
     
     if "frontend" in categories:
@@ -360,6 +380,20 @@ def generate_risks(categories: Set[str]) -> List[Risk]:
                 type="Compatibilidad",
                 description="Usuarios existentes necesitan migración o vinculación de cuentas",
                 severity="Media"
+            )
+        ])
+    
+    if "theme" in categories:
+        risks.extend([
+            Risk(
+                type="Accesibilidad",
+                description="Riesgo de bajo contraste en elementos heredados en modo oscuro",
+                severity="Baja"
+            ),
+            Risk(
+                type="Regresión",
+                description="Conflictos menores con estilos globales previos de CSS",
+                severity="Baja"
             )
         ])
     
@@ -539,6 +573,13 @@ def generate_clarifying_questions(categories: Set[str]) -> List[str]:
             "¿Necesitas autenticación de dos factores (2FA)?"
         ])
     
+    if "theme" in categories:
+        questions.extend([
+            "¿El diseño del modo oscuro debe seguir una paleta de colores específica o usamos los valores por defecto de Tailwind?",
+            "¿Es necesario persistir la elección del usuario en LocalStorage para futuras visitas?",
+            "¿Hay alguna sección o landing page que deba quedar excluida del modo oscuro?"
+        ])
+    
     if "frontend" in categories:
         questions.extend([
             "¿Tienes un diseño específico o mockups de referencia?",
@@ -678,6 +719,8 @@ def generate_estimate(categories: Set[str]) -> Estimate:
     breakdown = {}
     if "auth" in categories:
         breakdown["autenticacion"] = "1-2 días"
+    if "theme" in categories:
+        breakdown["desarrolloDeCodigo"] = "1 día"
     if "frontend" in categories:
         breakdown["frontend"] = "1.5-2 días"
     if "payment" in categories:
@@ -725,22 +768,56 @@ def generate_implementation_plan(categories: Set[str]) -> List[ImplementationSte
         ))
         step_num += 1
     
-    if "auth" in categories:
+    if "theme" in categories:
         steps.append(ImplementationStep(
             step=step_num,
-            task="Configurar servicio de autenticación y obtener credenciales",
-            duration="1-2 horas",
+            task="Configurar el selector de temas globales en la configuración de Tailwind",
+            duration="2 horas",
             dependencies=[]
         ))
         step_num += 1
         
         steps.append(ImplementationStep(
             step=step_num,
-            task="Implementar flujo de autenticación en backend",
-            duration="4-6 horas",
+            task="Refactorizar clases de color en componentes estructurales globales",
+            duration="6 horas",
             dependencies=[f"step {step_num-1}"]
         ))
         step_num += 1
+        
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Implementar un Theme Context Provider para el estado del botón toggle",
+            duration="3 horas",
+            dependencies=[f"step {step_num-2}"]
+        ))
+        step_num += 1
+        
+        steps.append(ImplementationStep(
+            step=step_num,
+            task="Pruebas de contraste y cumplimiento de accesibilidad básica",
+            duration="2 horas",
+            dependencies=[f"step {step_num-2}", f"step {step_num-1}"]
+        ))
+        step_num += 1
+    
+    # REMOVED: Hardcoded auth implementation steps that were injecting into every response
+    # if "auth" in categories:
+    #     steps.append(ImplementationStep(
+    #         step=step_num,
+    #         task="Configurar servicio de autenticación y obtener credenciales",
+    #         duration="1-2 horas",
+    #         dependencies=[]
+    #     ))
+    #     step_num += 1
+    #
+    #     steps.append(ImplementationStep(
+    #         step=step_num,
+    #         task="Implementar flujo de autenticación en backend",
+    #         duration="4-6 horas",
+    #         dependencies=[f"step {step_num-1}"]
+    #     ))
+    #     step_num += 1
     
     if "payment" in categories:
         steps.append(ImplementationStep(
@@ -943,16 +1020,34 @@ def generate_checklist(categories: Set[str]) -> List[str]:
     """
     checklist = []
     
-    if "auth" in categories:
+    # REMOVED: Hardcoded auth checklist items that were injecting into every response
+    # if "auth" in categories:
+    #     checklist.extend([
+    #         "✓ Configurar servicio de autenticación",
+    #         "✓ Obtener credenciales y API keys",
+    #         "✓ Implementar estrategia de autenticación en backend",
+    #         "✓ Crear endpoints de autenticación",
+    #         "✓ Actualizar modelo de usuario",
+    #         "✓ Implementar componente de login en frontend",
+    #         "✓ Manejar sesiones y tokens",
+    #         "✓ Actualizar middleware de rutas protegidas"
+    #     ])
+    
+    if "theme" in categories:
         checklist.extend([
-            "✓ Configurar servicio de autenticación",
-            "✓ Obtener credenciales y API keys",
-            "✓ Implementar estrategia de autenticación en backend",
-            "✓ Crear endpoints de autenticación",
-            "✓ Actualizar modelo de usuario",
-            "✓ Implementar componente de login en frontend",
-            "✓ Manejar sesiones y tokens",
-            "✓ Actualizar middleware de rutas protegidas"
+            "✓ Configurar Tailwind CSS para dark mode",
+            "✓ Crear ThemeContext con Provider",
+            "✓ Implementar hook useTheme personalizado",
+            "✓ Crear componente ThemeToggle en Navbar",
+            "✓ Implementar persistencia en localStorage",
+            "✓ Refactorizar componente Navbar con clases condicionales",
+            "✓ Refactorizar componentes de UI principales",
+            "✓ Actualizar estilos globales con variables de tema",
+            "✓ Testing de contraste con herramientas WCAG",
+            "✓ Testing en Chrome, Firefox, Safari",
+            "✓ Validar transiciones suaves entre temas",
+            "✓ Deploy a staging",
+            "✓ QA final en ambos modos"
         ])
     
     if "frontend" in categories:
